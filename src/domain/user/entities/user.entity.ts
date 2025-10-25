@@ -5,8 +5,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  DeleteDateColumn
+  DeleteDateColumn,
+  OneToMany
 } from 'typeorm'
+
+import type { Note } from '@/domain/note/entities/note.entity'
 
 @Entity('users')
 export class User {
@@ -19,6 +22,9 @@ export class User {
   @Exclude()
   @Column({ type: 'varchar', length: 255, nullable: false })
   password: string
+
+  @OneToMany('Note', 'user')
+  notes: Note[]
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date

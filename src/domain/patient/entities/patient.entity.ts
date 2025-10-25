@@ -5,8 +5,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  DeleteDateColumn
+  DeleteDateColumn,
+  OneToMany
 } from 'typeorm'
+
+import type { Note } from '@/domain/note/entities/note.entity'
 
 @Entity('patients')
 export class Patient {
@@ -18,6 +21,9 @@ export class Patient {
 
   @Column({ type: 'date', nullable: true })
   dateOfBirth: Date
+
+  @OneToMany('Note', 'patient')
+  notes: Note[]
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date
