@@ -6,9 +6,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 
 import { apiConfig, dbConfig, getValidationSchema } from './config'
 import { DatabaseModule } from './database/database.module'
-import { NoteModule } from './domain/note/note.module'
-import { PatientModule } from './domain/patient/patient.module'
-import { UserModule } from './domain/user/user.module'
+import { DomainModule } from './domain/domain.module'
 import { SharedModule } from './shared/shared.module'
 
 @Module({
@@ -24,9 +22,7 @@ import { SharedModule } from './shared/shared.module'
     }),
     SharedModule,
     DatabaseModule,
-    UserModule,
-    PatientModule,
-    NoteModule
+    DomainModule
   ]
 })
 export class AppModule {
