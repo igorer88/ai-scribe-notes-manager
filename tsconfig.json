@@ -28,5 +28,13 @@
         "options": { "classValidatorShim": true, "introspectComments": true }
       }
     ]
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "eslint.config.mjs",
+    "web",
+    "src/metadata.ts"
+  ],
+  "include": ["src/**/*", "test/**/*"]
 }

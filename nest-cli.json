@@ -2,6 +2,9 @@
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
+  "watchOptions": {
+    "exclude": ["node_modules", "dist", "src/metadata.ts"]
+  },
   "compilerOptions": {
     "builder": "swc",
     "typeCheck": true,

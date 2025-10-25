@@ -89,7 +89,7 @@ const recommendedTypeScriptConfigs = [
 
 export default [
   {
-    ignores: ['**/.eslintrc.cjs', 'docs/*', 'build/*', 'lib/*', 'dist/*']
+    ignores: ['**/.eslintrc.cjs', '**/node_modules/**', '**/coverage/**','docs/*', 'build/*', 'lib/*', 'dist/*', 'src/metadata.ts',]
   },
   ...recommendedTypeScriptConfigs,
   customTypescriptConfig
