@@ -5,8 +5,13 @@ import {
   Body,
   Param,
   Patch,
-  Delete
+  Delete,
+  ParseUUIDPipe
 } from '@nestjs/common'
+
+import { CreateNoteDto } from '@/domain/note/dto'
+import { Note } from '@/domain/note/entities/note.entity'
+import { NoteService } from '@/domain/note/note.service'
 
 import { CreatePatientDto } from './dto/create-patient.dto'
 import { UpdatePatientDto } from './dto/update-patient.dto'
@@ -15,7 +20,10 @@ import { PatientService } from './patient.service'
 
 @Controller('patients')
 export class PatientController {
-  constructor(private readonly patientService: PatientService) {}
+  constructor(
+    private readonly patientService: PatientService,
+    private readonly noteService: NoteService
+  ) {}
 
   @Post()
   create(@Body() createPatientDto: CreatePatientDto): Promise<Patient> {
@@ -48,5 +56,20 @@ export class PatientController {
   @Patch(':id/recover')
   recover(@Param('id') id: string): Promise<void> {
     return this.patientService.recover(id)
+  }
+
+  @Post(':patientId/notes')
+  createNoteForPatient(
+    @Param('patientId', ParseUUIDPipe) patientId: string,
+    @Body() createNoteDto: CreateNoteDto
+  ): Promise<Note> {
+    return this.noteService.create(createNoteDto, patientId)
+  }
+
+  @Get(':patientId/notes')
+  findAllNotesForPatient(
+    @Param('patientId', ParseUUIDPipe) patientId: string
+  ): Promise<Note[]> {
+    return this.noteService.findAllByPatientId(patientId)
   }
 }
