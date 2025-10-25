@@ -37,6 +37,10 @@ export class UserService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.usersRepository.delete(id)
+    await this.usersRepository.softDelete(id)
+  }
+
+  async recover(id: string): Promise<void> {
+    await this.usersRepository.recover({ id })
   }
 }
