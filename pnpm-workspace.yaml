@@ -1,0 +1,7 @@
+minimumReleaseAge: 1440 # 24 hours
+
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@scarf/scarf'
+  - '@swc/core'
+  - unrs-resolver
