@@ -63,3 +63,9 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Whisper AI env
+.whisper-env/
+
+# Project resources files
+resources/
