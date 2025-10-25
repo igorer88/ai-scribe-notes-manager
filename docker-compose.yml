@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        NODE_VERSION: 23-alpine
+        NODE_VERSION: 22-alpine
         PNPM_REGISTRY: 'https://registry.npmjs.org/'
       target: ${BUILD_STAGE}
     env_file:
@@ -38,7 +38,7 @@ services:
       timeout: 10s
       retries: 10
     volumes:
-      - ./config/db/pg_data:/var/lib/postgresql/data
+      - ./config/db/pg_data:/var/lib/postgresql
       - ./config/db/pg_dataset:/docker-entrypoint-initdb.d
     networks:
       - net
