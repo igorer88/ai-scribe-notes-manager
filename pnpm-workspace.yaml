@@ -1,7 +1,8 @@
-minimumReleaseAge: 1440 # 24 hours
+minimumReleaseAge: 1440
 
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@scarf/scarf'
   - '@swc/core'
+  - bcrypt
   - unrs-resolver

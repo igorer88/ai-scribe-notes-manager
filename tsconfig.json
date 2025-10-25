@@ -33,8 +33,7 @@
     "node_modules",
     "dist",
     "eslint.config.mjs",
-    "web",
-    "src/metadata.ts"
+    "web"
   ],
   "include": ["src/**/*", "test/**/*"]
 }

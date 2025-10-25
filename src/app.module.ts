@@ -6,6 +6,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 
 import { apiConfig, dbConfig, getValidationSchema } from './config'
 import { DatabaseModule } from './database/database.module'
+import { UserModule } from './domain/user/user.module'
 import { SharedModule } from './shared/shared.module'
 
 @Module({
@@ -20,7 +21,8 @@ import { SharedModule } from './shared/shared.module'
       rootPath: join(__dirname, '..', 'web')
     }),
     SharedModule,
-    DatabaseModule
+    DatabaseModule,
+    UserModule
   ]
 })
 export class AppModule {
