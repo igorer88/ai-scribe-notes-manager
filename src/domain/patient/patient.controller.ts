@@ -6,8 +6,11 @@ import {
   Param,
   Patch,
   Delete,
-  ParseUUIDPipe
+  ParseUUIDPipe,
+  UseInterceptors,
+  UploadedFile
 } from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
 
 import { CreateNoteDto } from '@/domain/note/dto'
 import { Note } from '@/domain/note/entities/note.entity'
@@ -36,34 +39,36 @@ export class PatientController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Patient> {
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Patient> {
     return this.patientService.findOne(id)
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePatientDto: UpdatePatientDto
   ): Promise<Patient> {
     return this.patientService.update(id, updatePatientDto)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
+  remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.patientService.remove(id)
   }
 
   @Patch(':id/recover')
-  recover(@Param('id') id: string): Promise<void> {
+  recover(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.patientService.recover(id)
   }
 
   @Post(':patientId/notes')
+  @UseInterceptors(FileInterceptor('audio'))
   createNoteForPatient(
     @Param('patientId', ParseUUIDPipe) patientId: string,
+    @UploadedFile() audioFile: Express.Multer.File,
     @Body() createNoteDto: CreateNoteDto
   ): Promise<Note> {
-    return this.noteService.create(createNoteDto, patientId)
+    return this.noteService.create(createNoteDto, patientId, audioFile)
   }
 
   @Get(':patientId/notes')

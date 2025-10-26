@@ -3,10 +3,11 @@ import {
   IsNotEmpty,
   IsBoolean,
   IsUUID,
-  ValidateIf
+  ValidateIf,
+  IsOptional
 } from 'class-validator'
 
-import { IsAudioFilePathValid } from '@/shared/validators/custom-note-validation'
+// import { IsAudioFilePathValid } from '@/shared/validators/custom-note-validation' // Removed
 
 export class CreateNoteDto {
   @ValidateIf(o => !o.isVoiceNote)
@@ -14,11 +15,13 @@ export class CreateNoteDto {
   @IsNotEmpty()
   content?: string
 
-  @IsAudioFilePathValid()
+  @IsOptional()
+  // @IsAudioFilePathValid() // Removed
   audioFilePath?: string
 
+  @IsOptional()
   @IsBoolean()
-  isVoiceNote: boolean
+  isVoiceNote?: boolean
 
   @IsUUID()
   @IsNotEmpty()
