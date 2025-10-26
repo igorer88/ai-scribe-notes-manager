@@ -34,7 +34,7 @@ cp .env.example .env
 
 2. Fill in the required values in `.env`:
    * **Required for all environments:** `BUILD_STAGE`, `API_SECRET_KEY`, database variables (`DB_*`)
-   * **Optional:** `NODE_ENV` (defined automatically by Docker stage), logging and console settings
+   * **Optional:** `NODE_ENV` (defined automatically by Docker stage), logging and console settings, file storage configuration (`FILE_STORAGE_*`)
    * The example file contains working defaults for development
 
 ### Database Setup
@@ -104,8 +104,9 @@ This section outlines the planned development steps for the AI Voice Note Manage
 
 **File Storage:** Implement a mechanism to store uploaded audio files.
 
-* [ ] Local storage
+* ✅ Local storage
 * [ ] Configure MinIO to store file as AWS S3 compatible storage
+* [ ] Adapt file storage module to use AWS S3 compatible service
 
 **AI Processing Services:** Develop and integrate services for:
 

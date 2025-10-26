@@ -38,3 +38,6 @@ build
 
 # Ignore config/db directory (optional, if you don't want them in the image)
 config/db
+
+# Ignore config/data directory
+config/data
