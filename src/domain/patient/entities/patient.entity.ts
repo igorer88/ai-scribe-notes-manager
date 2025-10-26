@@ -6,12 +6,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany
+  OneToMany,
+  Check
 } from 'typeorm'
 
 import type { Note } from '@/domain/note/entities/note.entity'
 
 @Entity('patients')
+@Check('CHK_Patient_DateOfBirth', '"dateOfBirth" <= CURRENT_DATE')
 export class Patient {
   @PrimaryGeneratedColumn('uuid')
   id: string

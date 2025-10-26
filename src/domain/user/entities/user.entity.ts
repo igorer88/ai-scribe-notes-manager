@@ -6,17 +6,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany
+  OneToMany,
+  Unique
 } from 'typeorm'
 
 import type { Note } from '@/domain/note/entities/note.entity'
 
 @Entity('users')
+@Unique('UQ_User_Username', ['username'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
+  @Column({ type: 'varchar', length: 50, nullable: false })
   username: string
 
   @Exclude()
