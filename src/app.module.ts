@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ServeStaticModule } from '@nestjs/serve-static'
 
 import {
+  aiConfig,
   apiConfig,
   dbConfig,
   storageConfig,
@@ -18,7 +19,7 @@ import { SharedModule } from './shared/shared.module'
   imports: [
     ConfigModule.forRoot({
       validationSchema: getValidationSchema(),
-      load: [apiConfig, dbConfig, storageConfig],
+      load: [aiConfig, apiConfig, dbConfig, storageConfig],
       isGlobal: true,
       cache: true
     }),
