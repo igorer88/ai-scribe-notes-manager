@@ -6,11 +6,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  ManyToOne
+  ManyToOne,
+  OneToOne
 } from 'typeorm'
 
 import type { Patient } from '@/domain/patient/entities/patient.entity'
 import type { User } from '@/domain/user/entities/user.entity'
+
+import { Transcription } from './transcription.entity'
 
 @Entity('notes')
 export class Note {
@@ -22,6 +25,9 @@ export class Note {
 
   @ManyToOne('Patient', 'notes')
   patient: Patient
+
+  @OneToOne('Transcription', 'note')
+  transcription: Transcription
 
   @Column({ type: 'text', nullable: true })
   content: string
