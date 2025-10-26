@@ -11,6 +11,16 @@ export const getValidationSchema = (): Joi.ObjectSchema => {
     API_SECRET_KEY: Joi.string().required(),
     FILE_STORAGE_TYPE: Joi.string().valid('local').default('local'),
     FILE_STORAGE_LOCAL_PATH: Joi.string().default('config/data/uploads'),
+    // AI configuration
+    AI_TRANSCRIPTION_PROVIDER: Joi.string()
+      .valid('whisperApi', 'openai')
+      .default('whisperApi'),
+    AI_TRANSCRIPTION_WHISPER_API_URL: Joi.string().default(
+      'http://localhost:9000'
+    ),
+    AI_TRANSCRIPTION_OPENAI_MODEL: Joi.string().default('whisper-1'),
+    // External API keys
+    OPENAI_API_KEY: Joi.string().optional(),
     // DB credentials
     DB_HOST: Joi.string().required(),
     DB_PORT: Joi.number().integer().min(1).max(65535).required(),
