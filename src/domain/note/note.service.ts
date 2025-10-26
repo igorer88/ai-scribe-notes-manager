@@ -1,27 +1,35 @@
 import {
   Injectable,
   NotFoundException,
-  ConflictException
+  ConflictException,
+  Logger
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
 import { PatientService } from '@/domain/patient/patient.service'
 import { UserService } from '@/domain/user/user.service'
+import { FileStorageService } from '@/shared/file-storage/file-storage.service'
 
 import { CreateNoteDto, UpdateNoteDto } from './dto'
 import { Note } from './entities/note.entity'
 
 @Injectable()
 export class NoteService {
+  private readonly logger = new Logger(this.constructor.name)
   constructor(
     @InjectRepository(Note)
     private notesRepository: Repository<Note>,
     private readonly patientService: PatientService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly fileStorageService: FileStorageService
   ) {}
 
-  async create(createNoteDto: CreateNoteDto, patientId: string): Promise<Note> {
+  async create(
+    createNoteDto: CreateNoteDto,
+    patientId: string,
+    audioFile?: Express.Multer.File
+  ): Promise<Note> {
     const patient = await this.patientService.findOne(patientId)
     if (!patient) {
       throw new NotFoundException(`Patient with ID "${patientId}" not found`)
@@ -34,12 +42,30 @@ export class NoteService {
       )
     }
 
-    const note = this.notesRepository.create({
-      ...createNoteDto,
-      patient,
-      user
-    })
-    return this.notesRepository.save(note)
+    // Create the note first to get the TypeORM-generated ID
+    const note = new Note()
+    note.patient = patient
+    note.user = user
+    note.content = createNoteDto.content
+    note.audioFilePath = createNoteDto.audioFilePath
+    note.isVoiceNote = audioFile ? true : createNoteDto.isVoiceNote || false
+
+    const savedNote = await this.notesRepository.save(note)
+
+    // If there's an audio file, save it using the actual note ID and update the note
+    if (audioFile) {
+      const finalAudioFilePath = await this.fileStorageService.saveFile(
+        audioFile,
+        patientId,
+        savedNote.id
+      )
+
+      // Update the note with the file path (isVoiceNote is already set to true)
+      savedNote.audioFilePath = finalAudioFilePath
+      return this.notesRepository.save(savedNote)
+    }
+
+    return savedNote
   }
 
   async findAll(): Promise<Note[]> {
