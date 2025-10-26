@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { DataSource } from 'typeorm'
 
-import { HealthCheckService } from './health-check.service'
+import { HealthCheckService } from '@/config/health-check/health-check.service'
 
 const mockDataSource = {
   query: jest.fn()
