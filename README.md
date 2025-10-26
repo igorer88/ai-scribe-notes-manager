@@ -33,9 +33,24 @@ cp .env.example .env
 ```
 
 2. Fill in the required values in `.env`:
-   * **Required for all environments:** `BUILD_STAGE`, `API_SECRET_KEY`, database variables (`DB_*`)
-   * **Optional:** `NODE_ENV` (defined automatically by Docker stage), logging and console settings, file storage configuration (`FILE_STORAGE_*`)
-   * The example file contains working defaults for development
+    * **Required for all environments:** `BUILD_STAGE`, `API_SECRET_KEY`, database variables (`DB_*`)
+    * **Optional:** `NODE_ENV` (defined automatically by Docker stage), logging and console settings, file storage configuration (`FILE_STORAGE_*`), AI transcription settings
+    * The example file contains working defaults for development
+
+### AI Configuration
+
+The application supports AI-powered transcription for voice notes. Configure the following environment variables:
+
+#### Transcription Provider Settings
+* `AI_TRANSCRIPTION_PROVIDER=whisperApi` (default: `whisperApi`)
+  * Currently only supports `whisperApi` (local Whisper service)
+* `AI_TRANSCRIPTION_WHISPER_API_URL=http://localhost:9000` (default: `http://localhost:9000`)
+  * URL of the local Whisper API service
+
+#### Docker Compose Whisper Settings
+* `WHISPER_MODEL=base` (default: `base`)
+  * Options: `tiny`, `base`, `small`, `medium`, `large` (larger models are more accurate but slower)
+* `WHISPER_ENGINE=openai_whisper` (default: `openai_whisper`)
 
 ### Database Setup
 
