@@ -24,11 +24,11 @@ export const databaseProviders: DynamicModule[] = [
       const specificOptions: TypeOrmModuleOptions = {
         ...commonOptions,
         type: 'postgres',
-        host: configService.get<string>('db.host'),
-        port: configService.get<number>('db.port'),
-        database: configService.get<string>('db.database'),
-        username: configService.get<string>('db.username'),
-        password: configService.get<string>('db.password'),
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        database: configService.get<string>('DB_NAME'),
+        username: configService.get<string>('DB_USER'),
+        password: configService.get<string>('DB_PASSWORD'),
         ssl: isProduction,
         uuidExtension: 'pgcrypto'
       }
