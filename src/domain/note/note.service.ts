@@ -9,10 +9,13 @@ import { Repository } from 'typeorm'
 
 import { PatientService } from '@/domain/patient/patient.service'
 import { UserService } from '@/domain/user/user.service'
+import { AiTranscriptionService } from '@/shared/ai-processing/services/transcription.service'
 import { FileStorageService } from '@/shared/file-storage/file-storage.service'
 
 import { CreateNoteDto, UpdateNoteDto } from './dto'
 import { Note } from './entities/note.entity'
+import { Transcription } from './entities/transcription.entity'
+import { TranscriptionService } from './transcription.service'
 
 @Injectable()
 export class NoteService {
@@ -22,7 +25,9 @@ export class NoteService {
     private notesRepository: Repository<Note>,
     private readonly patientService: PatientService,
     private readonly userService: UserService,
-    private readonly fileStorageService: FileStorageService
+    private readonly fileStorageService: FileStorageService,
+    private readonly aiTranscriptionService: AiTranscriptionService,
+    private readonly transcriptionService: TranscriptionService
   ) {}
 
   async create(
@@ -62,8 +67,24 @@ export class NoteService {
 
       // Update the note with the file path (isVoiceNote is already set to true)
       savedNote.audioFilePath = finalAudioFilePath
-      return this.notesRepository.save(savedNote)
+      const updatedNote = await this.notesRepository.save(savedNote)
+
+      // Process transcription asynchronously
+      setImmediate(() => {
+        this.aiTranscriptionService
+          .transcribeAudio(savedNote.id, audioFile)
+          .catch(error =>
+            this.logger.error(
+              `Transcription failed for note ${savedNote.id}`,
+              error
+            )
+          )
+      })
+
+      return updatedNote
     }
+
+    // For text notes, no additional AI processing needed
 
     return savedNote
   }
@@ -113,5 +134,12 @@ export class NoteService {
       throw new ConflictException(`Note with ID "${id}" is not deleted`)
     }
     await this.notesRepository.recover({ id })
+  }
+
+  async getTranscription(id: string): Promise<Transcription | null> {
+    // Verify the note exists (findOne throws NotFoundException if not found)
+    await this.findOne(id)
+
+    return this.transcriptionService.findOneByNoteId(id)
   }
 }

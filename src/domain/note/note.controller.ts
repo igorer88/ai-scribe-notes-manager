@@ -10,6 +10,7 @@ import {
 
 import { UpdateNoteDto } from './dto'
 import { Note } from './entities/note.entity'
+import { Transcription } from './entities/transcription.entity'
 import { NoteService } from './note.service'
 
 @Controller('notes')
@@ -24,6 +25,13 @@ export class NoteController {
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Note> {
     return this.noteService.findOne(id)
+  }
+
+  @Get(':id/transcription')
+  getTranscription(
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<Transcription | null> {
+    return this.noteService.getTranscription(id)
   }
 
   @Patch(':id')
