@@ -45,6 +45,26 @@ services:
     networks:
       - net
 
+  whisper:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    container_name: whisper
+    restart: unless-stopped
+    ports:
+      - ${WHISPER_PORT:-9000}:9000
+    environment:
+      - ASR_MODEL=${WHISPER_MODEL:-base}
+      - ASR_ENGINE=${WHISPER_ENGINE:-openai_whisper}
+    volumes:
+      - ./config/data/uploads:/tmp
+    networks:
+      - net
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://localhost:${WHISPER_PORT:-9000}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # pgadmin:
   #   image: dpage/pgadmin4:latest
   #   container_name: pgadmin
