@@ -14,7 +14,6 @@ This project follows a modular and layered architecture, primarily organized aro
   * **`src/main.ts`**: Application entry point.
   * **`src/app.module.ts`**: Root module of the application.
 * **`web/`**: (Frontend) This directory is reserved for the React frontend application.
-* **`resources/`**: Static resources like transcription files.
 * **`config/`**: Configuration files for tools like linters.
 * **`__test__/`**: Contains unit and E2E tests.
 
@@ -34,8 +33,6 @@ This project follows a modular and layered architecture, primarily organized aro
   * `userId`: Link to the User who created the note.
   * `patientId`: Link to the Patient this note is associated with.
 * **Transcription Entity:** Stores the full text transcription of a voice note, linked to `Note` (only for voice notes).
-* **Summary Entity:** Stores the AI-generated summary, linked to `Note`.
-* **Tag Entity:** Stores keywords/tags, linked to `Note` (many-to-many relationship).
 
 ### 2. Database Seeding
 
@@ -51,25 +48,17 @@ This project follows a modular and layered architecture, primarily organized aro
 * **Note Management:**
   * `POST /patients/:patientId/notes`: Create a new note associated with a specific patient (either written text or upload an audio file).
   * `GET /patients/:patientId/notes`: Retrieve all notes for a specific patient.
-  * `GET /notes/:id`: Retrieve a specific note (including its transcription, summary, tags, and associated patient metadata).
+  * `GET /notes/:id`: Retrieve a specific note (including its transcription and associated patient metadata).
   * `DELETE /notes/:id`: Delete a note.
 * **Search & Filter:**
-  * `GET /notes/search?query=...`: Search notes by content, transcription, summary, or tags, potentially filtered by `patientId`.
+  * `GET /notes/search?query=...`: Search notes by content or transcription, potentially filtered by `patientId`.
 
 ### 4. AI Integration Services
 
 * Create a dedicated NestJS module (`AiProcessingModule`).
-* **Transcription Service (Local Whisper):**
-  * Process audio files for voice notes using a local Whisper model.
+* **Transcription Service:**
+  * Process audio files for voice notes using Whisper (local or API).
   * Store the transcription in the `Transcription` entity.
-* **Summarization Service:**
-  * Receive text (either from a written note or a transcription).
-  * Send to an LLM API for summarization.
-  * Store the summary in the `Summary` entity.
-* **Tagging/Keyword Extraction Service:**
-  * Receive text (from a written note or a transcription).
-  * Use an LLM or NLP library to extract relevant tags/keywords.
-  * Store tags in the `Tag` entity and link to `Note`.
 
 ### 5. File Storage
 
@@ -90,7 +79,7 @@ This project follows a modular and layered architecture, primarily organized aro
   * Text area for written notes.
   * Audio recording/upload functionality for voice notes.
   * **Patient selection/association for new notes.**
-* Display component for notes, showing content, audio player (if voice note), transcription (if voice note), summary, and tags.
+* Display component for notes, showing content, audio player (if voice note), and transcription (if voice note).
 * Search bar and filter options (including by patient).
 
 ## III. Development Environment & Tools
