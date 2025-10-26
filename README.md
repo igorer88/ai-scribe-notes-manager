@@ -26,17 +26,43 @@ pnpm install
 
 ### Environment Variables
 
-Create a `.env` file in the root directory with the following variables:
+1. Copy the `.env.example` file to `.env`:
 
 ```bash
-API_PORT=3000
-API_SECRET_KEY=your_secret_key
+cp .env.example .env
+```
 
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=ai_scribe_db
-DB_USER=postgres
-DB_PASSWORD=postgres
+2. Fill in the required values in `.env`:
+   * **Required for all environments:** `BUILD_STAGE`, `API_SECRET_KEY`, database variables (`DB_*`)
+   * **Optional:** `NODE_ENV` (defined automatically by Docker stage), logging and console settings
+   * The example file contains working defaults for development
+
+### Database Setup
+
+The database setup is handled automatically when you start the containers. The first time you run the application, it will:
+
+1. Wait for PostgreSQL to be ready
+2. Run database migrations to create tables
+3. Seed the database with initial data
+
+```bash
+# Start the entire application (database + API)
+docker-compose up -d
+
+# Or start only the webapp (assuming database is already running)
+docker-compose up -d webapp
+```
+
+This will create:
+
+* Database tables and schema
+* 1 demo user (username: "demo", password: "demo")
+* 15 sample patients with realistic data
+
+**Note:** If you need to re-run seeders manually, you can use:
+
+```bash
+pnpm seed
 ```
 
 ## Compile and run the project
@@ -73,8 +99,8 @@ This section outlines the planned development steps for the AI Voice Note Manage
 
 **Core Entities & CRUD:**
 
-* [ ] Implement basic CRUD operations for User, Patient, and Note entities.
-* [ ] Generate migrations for basic entities
+* ✅ Implement basic CRUD operations for User, Patient, and Note entities.
+* ✅ Generate migrations for basic entities
 
 **File Storage:** Implement a mechanism to store uploaded audio files.
 

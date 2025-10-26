@@ -24,6 +24,9 @@ build
 # Ignore .env files (optional, if you don't want them in the image)
 .env
 
+# Database initialization flag
+.db_initialized
+
 # IDE and editor files
 .vscode
 .idea
