@@ -48,6 +48,9 @@ CLAUDE.md
 .env.production.local
 .env.local
 
+# Database initialization flag
+.db_initialized
+
 # Sqlite database files
 *.sqlite3
 
