@@ -110,9 +110,9 @@ This section outlines the planned development steps for the AI Voice Note Manage
 
 **AI Processing Services:** Develop and integrate services for:
 
-* [ ] Transcription (using local Whisper model or LLM API).
+* ✅ Transcription (Generate service and entities).
+* ✅ AIProcessing (Generate shared module using Whisper API or LLM API).
 * [ ] Summarization (using LLM API).
-* [ ] Tagging/Keyword Extraction (using LLM or NLP library).
 
 ### II. Frontend Development
 
