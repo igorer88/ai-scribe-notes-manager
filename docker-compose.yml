@@ -15,6 +15,7 @@ services:
       - .env
     volumes:
       - .:/app
+      - ./config/data/uploads:/app/config/data/uploads
     networks:
       - net
     depends_on:
