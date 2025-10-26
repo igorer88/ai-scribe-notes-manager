@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm'
 
-import { getValidationSchema } from './config'
+import { getValidationSchema } from './config/environment/validation.schema'
 
 const { error, value: envVars } = getValidationSchema().validate(process.env)
 
@@ -20,13 +20,5 @@ const AppDataSource = new DataSource({
   migrationsTableName: '_migrations',
   synchronize: false
 })
-
-AppDataSource.initialize()
-  .then(() => {
-    console.log('Data Source has been initialized!')
-  })
-  .catch(err => {
-    console.error('Error during Data Source initialization:', err)
-  })
 
 export { AppDataSource }
