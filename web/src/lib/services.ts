@@ -33,6 +33,10 @@ export const patientService = {
 
   async getById(id: string): Promise<Patient> {
     return api.get<Patient>(`/patients/${id}`)
+  },
+
+  async getNotes(id: string): Promise<Note[]> {
+    return api.get<Note[]>(`/patients/${id}/notes`)
   }
 }
 
