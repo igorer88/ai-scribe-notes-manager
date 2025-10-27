@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import { ArrowLeft, Mic, FileText, RefreshCw } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { AudioPlayer } from '@/components/AudioPlayer'
 import { useNoteStore } from '@/stores/noteStore'
 import { noteService } from '@/lib/services'
 import type { Note, Transcription } from '@/lib/types'
@@ -61,10 +62,14 @@ export function NoteDetailPage() {
       const transcriptionData = await noteService.getTranscription(id)
       setTranscription(transcriptionData)
     } catch (err) {
-      // Silently fail, transcription might not be ready yet
+      console.warn('Failed to refresh transcription:', err)
     } finally {
       setIsRefreshingTranscription(false)
     }
+  }
+
+  const formatTranscription = (text: string | null): string => {
+    return text ? `"${text}"` : 'Transcription not available yet'
   }
 
   if (isLoading) {
@@ -95,10 +100,10 @@ export function NoteDetailPage() {
 
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center space-x-4">
+    <div className="max-w-4xl mx-auto space-y-6 px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
         <Link to="/">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="w-full sm:w-auto">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Notes
           </Button>
@@ -154,14 +159,10 @@ export function NoteDetailPage() {
         <CardContent>
           {note.isVoiceNote ? (
             <div className="space-y-4">
-              {note.audioFilePath && (
-                <div>
-                  <audio controls className="w-full md:max-w-md">
-                    <source src={note.audioFilePath} type="audio/*" />
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
-              )}
+              <AudioPlayer
+                noteId={note.id}
+                createdAt={note.createdAt}
+              />
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold">Transcription:</h3>
@@ -177,8 +178,8 @@ export function NoteDetailPage() {
                     </Button>
                   )}
                 </div>
-                <div className="bg-muted p-4 rounded-md">
-                  {transcription?.text || 'Transcription not available yet'}
+                <div className="bg-muted p-4 rounded-md italic">
+                  {formatTranscription(transcription?.text || null)}
                 </div>
               </div>
             </div>

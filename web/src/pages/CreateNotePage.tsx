@@ -65,7 +65,7 @@ export function CreateNotePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6 px-4 sm:px-6 lg:px-8">
       <div>
         <h1 className="text-2xl font-bold">Create New Note</h1>
         <p className="text-muted-foreground">
@@ -99,12 +99,12 @@ export function CreateNotePage() {
             {/* Note Type Selection */}
             <div className="space-y-3">
               <label className="text-sm font-medium">Note Type</label>
-              <div className="flex justify-center space-x-4">
+              <div className="grid grid-cols-2 gap-4">
                 <Button
                   type="button"
                   variant={noteType === 'text' ? 'default' : 'outline'}
                   onClick={() => setNoteType('text')}
-                  className="flex items-center space-x-2"
+                  className="flex items-center justify-center space-x-2 h-12"
                 >
                   <FileText className="h-4 w-4" />
                   <span>Text Note</span>
@@ -113,7 +113,7 @@ export function CreateNotePage() {
                   type="button"
                   variant={noteType === 'voice' ? 'default' : 'outline'}
                   onClick={() => setNoteType('voice')}
-                  className="flex items-center space-x-2"
+                  className="flex items-center justify-center space-x-2 h-12"
                 >
                   <Mic className="h-4 w-4" />
                   <span>Voice Note</span>
@@ -156,11 +156,11 @@ export function CreateNotePage() {
               </div>
             )}
 
-            <div className="flex justify-end space-x-4">
-              <Button type="button" variant="outline" onClick={() => navigate('/')}>
+            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+              <Button type="button" variant="outline" onClick={() => navigate('/')} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                 {isLoading ? 'Creating...' : 'Create Note'}
               </Button>
             </div>

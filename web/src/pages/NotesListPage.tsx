@@ -7,14 +7,21 @@ import { Button } from '@/components/ui/button'
 import { useNoteStore } from '@/stores/noteStore'
 import type { Note } from '@/lib/types'
 
-function NoteCard({ note }: { note: Note }) {
-  const displayContent = note.isVoiceNote
+const getDisplayContent = (note: Note): string => {
+  return note.isVoiceNote
     ? (note.transcription?.text || 'Voice note - transcription pending')
     : (note.content || 'No content')
+}
 
-  const preview = displayContent.length > 100
-    ? `${displayContent.substring(0, 100)}...`
-    : displayContent
+const getPreview = (content: string): string => {
+  return content.length > 100
+    ? `${content.substring(0, 100)}...`
+    : content
+}
+
+function NoteCard({ note }: { note: Note }) {
+  const displayContent = getDisplayContent(note)
+  const preview = getPreview(displayContent)
 
   return (
     <Card className="hover:shadow-md transition-shadow cursor-pointer">
@@ -90,29 +97,30 @@ export function NotesListPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold">Notes</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={fetchNotes}
             disabled={isLoading}
+            className="flex-1 sm:flex-none"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
           <Link
             to="/create"
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 flex-1 sm:flex-none text-center"
           >
             New Note
           </Link>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {notes.map((note) => (
           <NoteCard key={note.id} note={note} />
         ))}
