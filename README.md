@@ -78,6 +78,8 @@ For production-like environment with Docker:
    ```
 
 2. **Run with Docker Compose (includes database setup):**
+
+The database setup is handled automatically when you start the containers. The first time you run the application, it will:
    ```bash
    # Start the entire application (database + API)
    docker-compose up -d
@@ -85,12 +87,22 @@ For production-like environment with Docker:
    # Or start only the webapp (assuming database is already running)
    docker-compose up -d webapp
    ```
+   This will create:
+
+- Database tables and schema
+- 1 demo user (username: "demo", password: "demo")
+- 4 sample patients with realistic data
 
    This will automatically:
    - Wait for PostgreSQL to be ready
    - Run database migrations (first run only)
    - Seed the database with initial data (first run only)
    - Start the application on port 3000
+
+**Note:** If you need to re-run seeders manually, you can use:
+```bash
+pnpm seed
+```
 
 3. **Check logs:**
    ```bash
