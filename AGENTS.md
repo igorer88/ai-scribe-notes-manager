@@ -89,6 +89,8 @@ This project follows a modular and layered architecture, primarily organized aro
 
 ## Agent Instructions
 
+- **Sequential Thinking & Planning:** Before executing any task, I will analyze the request, formulate a plan using sequential thinking (if available), and present the plan to you for review before proceeding with execution.
+
 - **Read File Before Change:** Before making any changes to a file, I must read its content to ensure I have the latest version and understand its context.
 - **Post-Change Commands:** After making file changes, I must run `pnpm lint && pnpm format && pnpm build`.
 - **Commit Execution:** I will only make a commit when you explicitly tell me to.
