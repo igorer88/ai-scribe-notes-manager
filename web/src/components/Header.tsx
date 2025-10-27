@@ -14,7 +14,7 @@ export function Header() {
             <Navigation />
             {user && (
               <span className="text-sm text-muted-foreground">
-                Welcome, {user.name}
+                Welcome, {user.username}
               </span>
             )}
           </div>
