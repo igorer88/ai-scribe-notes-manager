@@ -135,10 +135,10 @@ This section outlines the planned development steps for the AI Voice Note Manage
 
 - ✅ **Project Setup:** Create and configure the React project.
 - [ ] **User Interface:**
-  - [ ] Patient List/Dashboard.
-  - [ ] Patient Detail View (displaying associated notes).
-  - [ ] Component for creating new notes (text area, audio recording/upload, patient association).
-  - [ ] Display component for notes (content, audio player, transcription).
+  - ✅ Patient List/Dashboard.
+  - ✅ Patient Detail View (displaying statistics, and associated notes).
+  - ✅ Component for creating new notes (text area, audio recording/upload, patient association).
+  - ✅ Display component for notes (content, audio player, transcription).
   - [ ] Login/Registration pages.
   - [ ] Search bar and filter options.
 
