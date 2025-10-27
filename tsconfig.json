@@ -29,11 +29,6 @@
       }
     ]
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "eslint.config.mjs",
-    "web"
-  ],
+  "exclude": ["node_modules", "dist", "eslint.config.mjs", "web"],
   "include": ["src/**/*", "test/**/*"]
 }

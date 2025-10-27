@@ -24,7 +24,8 @@ import { SharedModule } from './shared/shared.module'
       cache: true
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'web')
+      rootPath: join(__dirname, '..', 'web', 'dist'),
+      exclude: ['/api*']
     }),
     SharedModule,
     DatabaseModule,
