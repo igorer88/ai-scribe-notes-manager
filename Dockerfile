@@ -44,17 +44,42 @@ RUN addgroup -g $SYSTEM_GID -S $SYSTEM_GROUP \
 # Expose the API port defined by the environment variable
 EXPOSE ${API_PORT}
 
+# Frontend build stage
+FROM base AS frontend-build
+
+# Copy the entire project for workspace support
+COPY . .
+
+# Install all dependencies using workspace
+RUN pnpm install --frozen-lockfile
+
+# Build the frontend
+RUN pnpm --filter web build
+
+# Backend build stage
+FROM base AS backend-build
+
 # Development stage
 FROM base AS dev
 
 # Set NODE_ENV to development
 ENV NODE_ENV=development
 
+# Install postgresql-client for database connectivity checks
+RUN apk add --no-cache postgresql-client
+
 # Copy the rest of the application code with ownership set to SYSTEM_USER
 COPY --chown=${SYSTEM_USER}:${SYSTEM_USER} . .
 
+# Copy built frontend from frontend-build stage
+COPY --from=frontend-build /app/web/dist ./web/dist
+
+# Copy docker entrypoint script
+COPY --chown=${SYSTEM_USER}:${SYSTEM_USER} config/scripts/docker-entrypoint.sh ./config/scripts/docker-entrypoint.sh
+RUN chmod +x ./config/scripts/docker-entrypoint.sh
+
 # Install development dependencies from cache
-RUN pnpm install --offline
+RUN pnpm install
 
 # Use system user
 USER ${SYSTEM_USER}
@@ -74,7 +99,7 @@ ENV NODE_ENV=production
 COPY --chown=${SYSTEM_USER}:${SYSTEM_USER} . .
 
 # Install production dependencies from cache and build the project
-RUN pnpm install --frozen-lockfile --offline --no-frozen-lockfile && pnpm build
+RUN pnpm install && pnpm build
 
 # Use system user
 USER ${SYSTEM_USER}
@@ -85,14 +110,23 @@ FROM base AS prod
 # Set NODE_ENV to production
 ENV NODE_ENV=production
 
+# Set default database host for Docker environment
+ENV DB_HOST=postgres
+
+# Install postgresql-client for database connectivity checks
+RUN apk add --no-cache postgresql-client
+
 # Copy production dependencies from build stage
 COPY --from=build /app/node_modules ./node_modules
 
 # Copy the rest of the application code from build stage
 COPY --from=build /app/dist ./dist
 
+# Copy built frontend from frontend-build stage
+COPY --from=frontend-build /app/web/dist ./web/dist
+
 # Prune development dependencies to reduce image size
-RUN pnpm prune --prod
+RUN pnpm prune --prod --ignore-scripts
 
 # Set ENTRYPOINT and CMD for production environment
 ENTRYPOINT ["pnpm", "run"]
