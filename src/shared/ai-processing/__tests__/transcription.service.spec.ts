@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
@@ -21,6 +22,14 @@ describe('AiTranscriptionService', () => {
     get: jest.fn()
   }
 
+  const mockLogger = {
+    log: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    verbose: jest.fn()
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -32,6 +41,10 @@ describe('AiTranscriptionService', () => {
         {
           provide: ConfigService,
           useValue: mockConfigService
+        },
+        {
+          provide: Logger,
+          useValue: mockLogger
         },
         {
           provide: WhisperApiProvider,
