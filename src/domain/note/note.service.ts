@@ -53,7 +53,7 @@ export class NoteService {
     note.user = user
     note.content = createNoteDto.content
     note.audioFilePath = createNoteDto.audioFilePath
-    note.isVoiceNote = audioFile ? true : createNoteDto.isVoiceNote || false
+    note.isVoiceNote = !!audioFile
 
     const savedNote = await this.notesRepository.save(note)
 
@@ -90,7 +90,10 @@ export class NoteService {
   }
 
   async findAll(): Promise<Note[]> {
-    return this.notesRepository.find({ relations: ['patient'] })
+    return this.notesRepository.find({
+      relations: ['patient', 'transcription'],
+      order: { createdAt: 'DESC' }
+    })
   }
 
   async findAllByPatientId(patientId: string): Promise<Note[]> {

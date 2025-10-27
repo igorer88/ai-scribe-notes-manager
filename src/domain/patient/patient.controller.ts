@@ -65,8 +65,8 @@ export class PatientController {
   @UseInterceptors(FileInterceptor('audio'))
   createNoteForPatient(
     @Param('patientId', ParseUUIDPipe) patientId: string,
-    @UploadedFile() audioFile: Express.Multer.File,
-    @Body() createNoteDto: CreateNoteDto
+    @Body() createNoteDto: CreateNoteDto,
+    @UploadedFile() audioFile?: Express.Multer.File
   ): Promise<Note> {
     return this.noteService.create(createNoteDto, patientId, audioFile)
   }

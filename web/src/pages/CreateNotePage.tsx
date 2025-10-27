@@ -43,6 +43,7 @@ export function CreateNotePage() {
     const dto: CreateNoteDto = {
       content: noteType === 'text' ? content : undefined,
       isVoiceNote: noteType === 'voice',
+      userId: '', // Will be set in the service
     }
 
     try {
