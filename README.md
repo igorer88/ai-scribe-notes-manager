@@ -54,19 +54,6 @@ The application supports AI-powered transcription for voice notes. Configure the
   - Options: `tiny`, `base`, `small`, `medium`, `large` (larger models are more accurate but slower)
 - `WHISPER_ENGINE=openai_whisper` (default: `openai_whisper`)
 
-
-## Compile and run the project
-
-### Local Development
-
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-```
-
 ### Production (Local with Docker)
 
 For production-like environment with Docker:
@@ -109,6 +96,18 @@ pnpm seed
    docker-compose logs -f webapp
    ```
 
+## Compile and run the project
+
+### Local Development
+
+```bash
+# development
+$ pnpm run start
+
+# watch mode
+$ pnpm run start:dev
+```
+
 ### Manual Production Mode
 
 If you prefer to run without Docker:
@@ -116,6 +115,7 @@ If you prefer to run without Docker:
 ```bash
 # production mode (requires manual database setup)
 $ pnpm run start:prod
+
 ```
 
 ## Run tests
@@ -159,7 +159,7 @@ This section outlines the planned development steps for the AI Voice Note Manage
 ### II. Frontend Development
 
 - ✅ **Project Setup:** Create and configure the React project.
-- [ ] **User Interface:**
+- ✅ **User Interface:**
   - ✅ Patient List/Dashboard.
   - ✅ Patient Detail View (displaying statistics, and associated notes).
   - ✅ Component for creating new notes (text area, audio recording/upload, patient association).
