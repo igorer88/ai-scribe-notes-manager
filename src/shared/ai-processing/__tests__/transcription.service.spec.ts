@@ -43,15 +43,14 @@ describe('AiTranscriptionService', () => {
           useValue: mockConfigService
         },
         {
-          provide: Logger,
-          useValue: mockLogger
-        },
-        {
           provide: WhisperApiProvider,
           useClass: MockTranscriptionProvider
         }
       ]
-    }).compile()
+    })
+      .overrideProvider(Logger)
+      .useValue(mockLogger)
+      .compile()
 
     service = module.get<AiTranscriptionService>(AiTranscriptionService)
   })
@@ -149,10 +148,18 @@ describe('AiTranscriptionService', () => {
         throw new Error('Database error')
       })
 
+      // Spy on logger.error to suppress error logs during test
+      const loggerErrorSpy = jest
+        .spyOn(service['logger'], 'error')
+        .mockImplementation(() => undefined)
+
       // Act & Assert
       await expect(
         service.transcribeAudio(noteId, mockAudioFile)
       ).rejects.toThrow()
+
+      // Restore logger.error
+      loggerErrorSpy.mockRestore()
     })
   })
 })
