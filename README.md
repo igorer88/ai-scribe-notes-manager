@@ -12,11 +12,11 @@ This project is the backend for the AI Voice Note Manager Web App, built with Ne
 
 ## Technologies
 
-* **Backend:** NestJS (TypeScript)
-* **Database:** PostgreSQL
-* **Package Manager:** pnpm
-* **Compiler:** SWC
-* **Frontend:** React (to be developed in `./web` folder)
+- **Backend:** NestJS (TypeScript)
+- **Database:** PostgreSQL
+- **Package Manager:** pnpm
+- **Compiler:** SWC
+- **Frontend:** React (to be developed in `./web` folder)
 
 ## Project setup
 
@@ -33,24 +33,26 @@ cp .env.example .env
 ```
 
 2. Fill in the required values in `.env`:
-    * **Required for all environments:** `BUILD_STAGE`, `API_SECRET_KEY`, database variables (`DB_*`)
-    * **Optional:** `NODE_ENV` (defined automatically by Docker stage), logging and console settings, file storage configuration (`FILE_STORAGE_*`), AI transcription settings
-    * The example file contains working defaults for development
+   - **Required for all environments:** `BUILD_STAGE`, `API_SECRET_KEY`, database variables (`DB_*`)
+   - **Optional:** `NODE_ENV` (defined automatically by Docker stage), logging and console settings, file storage configuration (`FILE_STORAGE_*`), AI transcription settings
+   - The example file contains working defaults for development
 
 ### AI Configuration
 
 The application supports AI-powered transcription for voice notes. Configure the following environment variables:
 
 #### Transcription Provider Settings
-* `AI_TRANSCRIPTION_PROVIDER=whisperApi` (default: `whisperApi`)
-  * Currently only supports `whisperApi` (local Whisper service)
-* `AI_TRANSCRIPTION_WHISPER_API_URL=http://localhost:9000` (default: `http://localhost:9000`)
-  * URL of the local Whisper API service
+
+- `AI_TRANSCRIPTION_PROVIDER=whisperApi` (default: `whisperApi`)
+  - Currently only supports `whisperApi` (local Whisper service)
+- `AI_TRANSCRIPTION_WHISPER_API_URL=http://localhost:9000` (default: `http://localhost:9000`)
+  - URL of the local Whisper API service
 
 #### Docker Compose Whisper Settings
-* `WHISPER_MODEL=base` (default: `base`)
-  * Options: `tiny`, `base`, `small`, `medium`, `large` (larger models are more accurate but slower)
-* `WHISPER_ENGINE=openai_whisper` (default: `openai_whisper`)
+
+- `WHISPER_MODEL=base` (default: `base`)
+  - Options: `tiny`, `base`, `small`, `medium`, `large` (larger models are more accurate but slower)
+- `WHISPER_ENGINE=openai_whisper` (default: `openai_whisper`)
 
 ### Database Setup
 
@@ -70,9 +72,9 @@ docker-compose up -d webapp
 
 This will create:
 
-* Database tables and schema
-* 1 demo user (username: "demo", password: "demo")
-* 15 sample patients with realistic data
+- Database tables and schema
+- 1 demo user (username: "demo", password: "demo")
+- 4 sample patients with realistic data
 
 **Note:** If you need to re-run seeders manually, you can use:
 
@@ -114,31 +116,31 @@ This section outlines the planned development steps for the AI Voice Note Manage
 
 **Core Entities & CRUD:**
 
-* ✅ Implement basic CRUD operations for User, Patient, and Note entities.
-* ✅ Generate migrations for basic entities
+- ✅ Implement basic CRUD operations for User, Patient, and Note entities.
+- ✅ Generate migrations for basic entities
 
 **File Storage:** Implement a mechanism to store uploaded audio files.
 
-* ✅ Local storage
-* [ ] Configure MinIO to store file as AWS S3 compatible storage
-* [ ] Adapt file storage module to use AWS S3 compatible service
+- ✅ Local storage
+- [ ] Configure MinIO to store file as AWS S3 compatible storage
+- [ ] Adapt file storage module to use AWS S3 compatible service
 
 **AI Processing Services:** Develop and integrate services for:
 
-* ✅ Transcription (Generate service and entities).
-* ✅ AIProcessing (Generate shared module using Whisper API or LLM API).
-* [ ] Summarization (using LLM API).
+- ✅ Transcription (Generate service and entities).
+- ✅ AIProcessing (Generate shared module using Whisper API or LLM API).
+- [ ] Summarization (using LLM API).
 
 ### II. Frontend Development
 
-* [ ] **Project Setup:** Create and configure the React project.
-* [ ] **User Interface:**
-  * [ ] Patient List/Dashboard.
-  * [ ] Patient Detail View (displaying associated notes).
-  * [ ] Component for creating new notes (text area, audio recording/upload, patient association).
-  * [ ] Display component for notes (content, audio player, transcription, summary, tags).
-  * [ ] Login/Registration pages.
-  * [ ] Search bar and filter options.
+- ✅ **Project Setup:** Create and configure the React project.
+- [ ] **User Interface:**
+  - [ ] Patient List/Dashboard.
+  - [ ] Patient Detail View (displaying associated notes).
+  - [ ] Component for creating new notes (text area, audio recording/upload, patient association).
+  - [ ] Display component for notes (content, audio player, transcription).
+  - [ ] Login/Registration pages.
+  - [ ] Search bar and filter options.
 
 ## License
 
