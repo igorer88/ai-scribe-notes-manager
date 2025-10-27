@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dialog'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { patientService } from '@/lib/services'
+import { patientService, noteService } from '@/lib/services'
 import type { Patient, Note } from '@/lib/types'
 import { FileText, Mic, Calendar, User } from 'lucide-react'
 
@@ -133,9 +133,121 @@ export function PatientDetailsModal({
                 )}
               </CardContent>
             </Card>
+
+            {/* Audio Playback Section */}
+            {notes.some(note => note.isVoiceNote) && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Mic className="h-4 w-4" />
+                    Voice Notes
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-3">
+                    {notes
+                      .filter(note => note.isVoiceNote)
+                      .map(note => (
+                        <AudioPlayer key={note.id} note={note} />
+                      ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Future: Summaries Section */}
+            <Card className="border-dashed">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm opacity-60">Summaries</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-xs text-muted-foreground">
+                  AI-generated summaries will appear here in future updates.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         )}
       </DialogContent>
     </Dialog>
+  )
+}
+
+interface AudioPlayerProps {
+  note: Note
+}
+
+function AudioPlayer({ note }: AudioPlayerProps) {
+  const [audioUrl, setAudioUrl] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadAudio = async () => {
+      if (!note.audioFilePath) return
+
+      setIsLoading(true)
+      setError(null)
+      try {
+        const url = await noteService.getAudioFile(note.id)
+        setAudioUrl(url)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load audio')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadAudio()
+  }, [note.id, note.audioFilePath])
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  return (
+    <div className="p-3 border rounded-md bg-muted/20">
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-xs text-muted-foreground">
+          {formatDate(note.createdAt)}
+        </div>
+        {note.transcription && (
+          <Badge variant="outline" className="text-xs">
+            Transcribed
+          </Badge>
+        )}
+      </div>
+
+      {note.transcription && (
+        <div className="mb-3">
+          <p className="text-sm text-muted-foreground italic">
+            &ldquo;{note.transcription.text}&rdquo;
+          </p>
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className="text-xs text-muted-foreground">Loading audio...</div>
+      ) : error ? (
+        <div className="text-xs text-red-500">Audio unavailable</div>
+      ) : audioUrl ? (
+        <audio
+          controls
+          className="w-full h-8"
+          preload="none"
+        >
+          <source src={audioUrl} type="audio/mpeg" />
+          <source src={audioUrl} type="audio/wav" />
+          Your browser does not support the audio element.
+        </audio>
+      ) : (
+        <div className="text-xs text-muted-foreground">Audio file not available</div>
+      )}
+    </div>
   )
 }
