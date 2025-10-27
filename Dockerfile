@@ -116,6 +116,9 @@ ENV DB_HOST=postgres
 # Install postgresql-client for database connectivity checks
 RUN apk add --no-cache postgresql-client
 
+# Copy package.json and pnpm-lock.yaml for pruning
+COPY --from=build /app/package.json /app/pnpm-lock.yaml ./
+
 # Copy production dependencies from build stage
 COPY --from=build /app/node_modules ./node_modules
 
