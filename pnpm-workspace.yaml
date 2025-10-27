@@ -1,5 +1,5 @@
 packages:
-  - 'web'
+  - web
 
 minimumReleaseAge: 1440
 
@@ -8,4 +8,5 @@ onlyBuiltDependencies:
   - '@scarf/scarf'
   - '@swc/core'
   - bcrypt
+  - esbuild
   - unrs-resolver

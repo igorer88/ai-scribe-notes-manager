@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
@@ -21,6 +22,14 @@ describe('AiTranscriptionService', () => {
     get: jest.fn()
   }
 
+  const mockLogger = {
+    log: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    verbose: jest.fn()
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -38,7 +47,10 @@ describe('AiTranscriptionService', () => {
           useClass: MockTranscriptionProvider
         }
       ]
-    }).compile()
+    })
+      .overrideProvider(Logger)
+      .useValue(mockLogger)
+      .compile()
 
     service = module.get<AiTranscriptionService>(AiTranscriptionService)
   })
@@ -136,10 +148,18 @@ describe('AiTranscriptionService', () => {
         throw new Error('Database error')
       })
 
+      // Spy on logger.error to suppress error logs during test
+      const loggerErrorSpy = jest
+        .spyOn(service['logger'], 'error')
+        .mockImplementation(() => undefined)
+
       // Act & Assert
       await expect(
         service.transcribeAudio(noteId, mockAudioFile)
       ).rejects.toThrow()
+
+      // Restore logger.error
+      loggerErrorSpy.mockRestore()
     })
   })
 })
