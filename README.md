@@ -141,6 +141,7 @@ This section outlines the planned development steps for the AI Voice Note Manage
 
 - ✅ Implement basic CRUD operations for User, Patient, and Note entities.
 - ✅ Generate migrations for basic entities
+- [ ] Add in-app voice recording for notes
 
 **File Storage:** Implement a mechanism to store uploaded audio files.
 
