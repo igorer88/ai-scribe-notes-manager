@@ -30,8 +30,9 @@ cp .env.example .env
 
 2. Fill in the required values in `.env`:
    - **Required for all environments:** `BUILD_STAGE`, `API_SECRET_KEY`, database variables (`DB_*`)
+   `DB_HOST` should be set to `postgres`to work with docker network.
    - **Optional:** `NODE_ENV` (defined automatically by Docker stage), logging and console settings, file storage configuration (`FILE_STORAGE_*`), AI transcription settings
-   - The example file contains working defaults for development
+   - The example file contains working defaults for local production
 
 ### AI Configuration
 
@@ -95,6 +96,8 @@ pnpm seed
 ## Compile and run the project
 
 ### Local Development
+
+Edit .env and set DB_HOST=localhost
 
 ```bash
 # install deps
