@@ -47,4 +47,8 @@ export class FileStorageService {
     const filePath = this.generateFilePath(patientId, noteId, fileExtension)
     return this.activeProvider.saveFile(file, filePath)
   }
+
+  getFilePath(filePath: string): string {
+    return this.activeProvider.getFilePath(filePath)
+  }
 }

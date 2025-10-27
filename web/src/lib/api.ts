@@ -27,7 +27,29 @@ export const api = {
   },
 
   async get<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint)
+    const url = `${API_BASE_URL}${endpoint}`
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} ${response.statusText}`)
+    }
+
+    // Handle empty responses (like when transcription is not yet processed)
+    const contentLength = response.headers.get('content-length')
+    if (contentLength === '0' || response.status === 204) {
+      return null as T
+    }
+
+    try {
+      return await response.json()
+    } catch (error) {
+      // If JSON parsing fails (empty response), return null
+      return null as T
+    }
   },
 
   async postFormData<T>(endpoint: string, formData: FormData): Promise<T> {
