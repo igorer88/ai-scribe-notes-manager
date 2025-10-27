@@ -55,13 +55,23 @@ export const noteService = {
     audioFile?: File
   ): Promise<Note> {
     const user = await authService.getCurrentUser()
-    const formData = new FormData()
-    formData.append('content', dto.content || '')
-    formData.append('isVoiceNote', dto.isVoiceNote.toString())
-    formData.append('userId', user.id)
-    if (audioFile) {
-      formData.append('audio', audioFile)
+
+    if (dto.isVoiceNote) {
+      // Voice notes: send as FormData
+      const formData = new FormData()
+      formData.append('isVoiceNote', dto.isVoiceNote.toString())
+      formData.append('userId', user.id)
+      if (audioFile) {
+        formData.append('audio', audioFile)
+      }
+      return api.postFormData<Note>(`/patients/${patientId}/notes`, formData)
+    } else {
+      // Text notes: send as JSON without isVoiceNote
+      const payload = {
+        content: dto.content || '',
+        userId: user.id
+      }
+      return api.post<Note>(`/patients/${patientId}/notes`, payload)
     }
-    return api.postFormData<Note>(`/patients/${patientId}/notes`, formData)
   }
 }

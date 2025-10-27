@@ -29,7 +29,7 @@ export interface Note {
 
 export interface Transcription {
   id: string
-  content: string
+  text: string
   noteId: string
   createdAt: string
   updatedAt: string

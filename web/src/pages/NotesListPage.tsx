@@ -1,17 +1,15 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
+import { RefreshCw } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { useNoteStore } from '@/stores/noteStore'
-import { usePatientStore } from '@/stores/patientStore'
 import type { Note } from '@/lib/types'
 
 function NoteCard({ note }: { note: Note }) {
-  const { getPatientById } = usePatientStore()
-  const patient = getPatientById(note.patientId)
-
   const displayContent = note.isVoiceNote
-    ? (note.transcription?.content || 'Voice note - transcription pending')
+    ? (note.transcription?.text || 'Voice note - transcription pending')
     : (note.content || 'No content')
 
   const preview = displayContent.length > 100
@@ -23,10 +21,10 @@ function NoteCard({ note }: { note: Note }) {
       <Link to={`/notes/${note.id}`}>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">
-            {patient?.name || 'Unknown Patient'}
+            {note.patient?.name || 'Unknown Patient'}
           </CardTitle>
           <div className="text-sm text-muted-foreground">
-            {format(new Date(note.createdAt), 'MMM dd, yyyy HH:mm')}
+            {format(new Date(note.createdAt), 'MMM dd, yyyy HH:mm')} (UTC)
           </div>
         </CardHeader>
         <CardContent>
@@ -95,12 +93,23 @@ export function NotesListPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Notes</h1>
-        <Link
-          to="/create"
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-        >
-          New Note
-        </Link>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchNotes}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <Link
+            to="/create"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            New Note
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
