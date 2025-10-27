@@ -20,10 +20,6 @@ This project is the backend for the AI Voice Note Manager Web App, built with Ne
 
 ## Project setup
 
-```bash
-pnpm install
-```
-
 ### Environment Variables
 
 1. Copy the `.env.example` file to `.env`:
@@ -101,6 +97,9 @@ pnpm seed
 ### Local Development
 
 ```bash
+# install deps
+pnpm install
+
 # development
 $ pnpm run start
 
