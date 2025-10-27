@@ -15,6 +15,7 @@ const AppDataSource = new DataSource({
   database: envVars.DB_NAME,
   username: envVars.DB_USER,
   password: envVars.DB_PASSWORD,
+  ssl: false,
   entities: [__dirname + '/**/**/*.entity{.ts,.js}'],
   migrations: ['./src/database/migrations/*{.ts,.js}'],
   migrationsTableName: '_migrations',
