@@ -36,4 +36,8 @@ export class LocalFileStorageService
 
     return filePath
   }
+
+  getFilePath(filePath: string): string {
+    return path.join(this.storagePath, filePath)
+  }
 }

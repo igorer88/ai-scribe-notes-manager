@@ -148,4 +148,20 @@ export class NoteService {
 
     return this.transcriptionService.findOneByNoteId(id)
   }
+
+  async getAudioFile(id: string): Promise<string> {
+    const note = await this.findOne(id)
+
+    if (!note.isVoiceNote) {
+      throw new NotFoundException(`Note with ID "${id}" is not a voice note`)
+    }
+
+    if (!note.audioFilePath) {
+      throw new NotFoundException(
+        `Audio file not found for note with ID "${id}"`
+      )
+    }
+
+    return this.fileStorageService.getFilePath(note.audioFilePath)
+  }
 }

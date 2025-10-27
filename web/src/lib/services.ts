@@ -53,6 +53,11 @@ export const noteService = {
     return api.get<Transcription | null>(`/notes/${id}/transcription`)
   },
 
+  async getAudioFile(id: string): Promise<string> {
+    const url = `${import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1'}/notes/${id}/audio`
+    return url
+  },
+
   async createForPatient(
     patientId: string,
     dto: CreateNoteDto,

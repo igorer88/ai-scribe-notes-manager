@@ -1,3 +1,7 @@
+import { createReadStream } from 'node:fs'
+
+import { stat } from 'node:fs/promises'
+
 import {
   Controller,
   Get,
@@ -5,8 +9,10 @@ import {
   Param,
   Patch,
   Delete,
-  ParseUUIDPipe
+  ParseUUIDPipe,
+  Res
 } from '@nestjs/common'
+import { Response } from 'express'
 
 import { UpdateNoteDto } from './dto'
 import { Note } from './entities/note.entity'
@@ -45,6 +51,25 @@ export class NoteController {
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.noteService.remove(id)
+  }
+
+  @Get(':id/audio')
+  async getAudioFile(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res() response: Response
+  ): Promise<void> {
+    const filePath = await this.noteService.getAudioFile(id)
+    const fileStat = await stat(filePath)
+
+    response.set({
+      'Content-Type': 'audio/mpeg',
+      'Content-Length': fileStat.size,
+      'Accept-Ranges': 'bytes',
+      'Cache-Control': 'public, max-age=31536000'
+    })
+
+    const fileStream = createReadStream(filePath)
+    fileStream.pipe(response)
   }
 
   @Patch(':id/recover')
