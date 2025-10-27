@@ -18,7 +18,12 @@ export const databaseProviders: DynamicModule[] = [
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
         synchronize: !isProduction,
-        autoLoadEntities: true
+        autoLoadEntities: true,
+        retryAttempts: isProduction ? 10 : 3, // More retries in production
+        retryDelay: 3000, // 3 seconds delay between retries
+        connectTimeoutMS: 10000, // 10 seconds connection timeout
+        acquireTimeoutMS: 30000, // 30 seconds acquire timeout
+        timeout: 30000 // 30 seconds query timeout
       }
 
       const specificOptions: TypeOrmModuleOptions = {
@@ -29,7 +34,7 @@ export const databaseProviders: DynamicModule[] = [
         database: configService.get<string>('DB_NAME'),
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASSWORD'),
-        ssl: isProduction,
+        ssl: false, // Disable SSL for Docker environment
         uuidExtension: 'pgcrypto'
       }
 
