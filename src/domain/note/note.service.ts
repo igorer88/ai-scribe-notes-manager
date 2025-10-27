@@ -90,7 +90,7 @@ export class NoteService {
   }
 
   async findAll(): Promise<Note[]> {
-    return this.notesRepository.find()
+    return this.notesRepository.find({ relations: ['patient'] })
   }
 
   async findAllByPatientId(patientId: string): Promise<Note[]> {
@@ -98,7 +98,10 @@ export class NoteService {
   }
 
   async findOne(id: string): Promise<Note> {
-    const note = await this.notesRepository.findOneBy({ id })
+    const note = await this.notesRepository.findOne({
+      where: { id },
+      relations: ['patient', 'transcription']
+    })
     if (!note) {
       throw new NotFoundException(`Note with ID "${id}" not found`)
     }
