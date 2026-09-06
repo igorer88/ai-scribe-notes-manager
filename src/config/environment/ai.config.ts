@@ -2,8 +2,8 @@ import { registerAs } from '@nestjs/config'
 
 export interface AiConfig {
   transcription: {
-    provider: 'whisperApi' | 'openai'
-    whisperApi: {
+    provider: 'whisper-api' | 'openai'
+    'whisper-api': {
       url: string
     }
     openai: {
@@ -18,8 +18,8 @@ export const aiConfig = registerAs('ai', (): AiConfig => ({
     provider:
       (process.env
         .AI_TRANSCRIPTION_PROVIDER as AiConfig['transcription']['provider']) ||
-      'whisperApi',
-    whisperApi: {
+      'whisper-api',
+    'whisper-api': {
       url:
         process.env.AI_TRANSCRIPTION_WHISPER_API_URL || 'http://localhost:9000'
     },

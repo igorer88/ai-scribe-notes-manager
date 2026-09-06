@@ -18,8 +18,8 @@ export const getValidationSchema = (): Joi.ObjectSchema => {
     FILE_STORAGE_LOCAL_PATH: Joi.string().default('config/data/uploads'),
     // AI configuration
     AI_TRANSCRIPTION_PROVIDER: Joi.string()
-      .valid('whisperApi', 'openai')
-      .default('whisperApi'),
+      .valid('whisper-api', 'openai')
+      .default('whisper-api'),
     AI_TRANSCRIPTION_WHISPER_API_URL: Joi.string().default(
       'http://localhost:9000'
     ),

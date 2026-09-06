@@ -24,7 +24,7 @@ export class WhisperApiProvider implements TranscriptionProvider {
   ): Promise<TranscriptionResult> {
     const startTime = Date.now()
     const whisperUrl = this.configService.get<string>(
-      'ai.transcription.whisperApi.url'
+      'ai.transcription.whisper-api.url'
     )
 
     try {
