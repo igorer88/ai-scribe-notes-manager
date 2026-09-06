@@ -2,11 +2,15 @@ import { registerAs } from '@nestjs/config'
 
 export interface AiConfig {
   transcription: {
-    provider: 'whisper-api' | 'openai'
+    provider: 'whisper-api' | 'openai' | 'gemini'
     'whisper-api': {
       url: string
     }
     openai: {
+      apiKey: string
+      model: string
+    }
+    gemini: {
       apiKey: string
       model: string
     }
@@ -26,6 +30,10 @@ export const aiConfig = registerAs('ai', (): AiConfig => ({
     openai: {
       apiKey: process.env.OPENAI_API_KEY || '',
       model: process.env.AI_TRANSCRIPTION_OPENAI_MODEL || 'whisper-1'
+    },
+    gemini: {
+      apiKey: process.env.GEMINI_API_KEY || '',
+      model: process.env.AI_TRANSCRIPTION_GEMINI_MODEL || 'gemini-2.5-flash'
     }
   }
 }))
