@@ -1,8 +1,19 @@
+import { useNavigate } from 'react-router-dom'
+import { LogOut } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/stores/authStore'
+
 import { Navigation } from './Navigation'
 
 export function Header() {
-  const { user } = useAuthStore()
+  const navigate = useNavigate()
+  const { user, logout } = useAuthStore()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
     <header className="w-full border-b bg-card/50 backdrop-blur-lg shrink-0">
@@ -13,9 +24,22 @@ export function Header() {
           <div className="flex items-center space-x-2">
             <Navigation />
             {user && (
-              <span className="text-sm text-muted-foreground">
-                Welcome, {user.username}
-              </span>
+              <>
+                <span className="text-sm text-muted-foreground">
+                  Welcome, {user.username}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  onClick={handleLogout}
+                >
+                  <span className="flex items-center space-x-2">
+                    <LogOut className="h-4 w-4" />
+                    <span className="hidden lg:inline">Logout</span>
+                  </span>
+                </Button>
+              </>
             )}
           </div>
         </div>

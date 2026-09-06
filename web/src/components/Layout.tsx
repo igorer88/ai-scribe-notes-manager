@@ -9,13 +9,9 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { user, initialize } = useAuthStore()
+  const { user } = useAuthStore()
   const { fetchPatients } = usePatientStore()
   const { fetchNotes } = useNoteStore()
-
-  useEffect(() => {
-    initialize()
-  }, [initialize])
 
   useEffect(() => {
     if (user) {

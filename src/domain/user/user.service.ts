@@ -31,8 +31,18 @@ export class UserService {
     return this.usersRepository.findOneBy({ id })
   }
 
+  async findByUsername(username: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { username } })
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    await this.usersRepository.update(id, updateUserDto)
+    const data = { ...updateUserDto }
+
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10)
+    }
+
+    await this.usersRepository.update(id, data)
     return this.usersRepository.findOneBy({ id })
   }
 
