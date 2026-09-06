@@ -5,8 +5,12 @@ import { Environment } from '../enums'
 export const getValidationSchema = (): Joi.ObjectSchema => {
   return Joi.object({
     NODE_ENV: Joi.string()
-      .default(Environment.Development)
-      .valid(Environment.Development, Environment.Production),
+      .valid(
+        Environment.Development,
+        Environment.Production,
+        Environment.Staging
+      )
+      .default(Environment.Development),
     API_PORT: Joi.number().integer().min(1).max(65535).default(3000).required(),
     API_SECRET_KEY: Joi.string().required(),
     JWT_EXPIRES_IN: Joi.string().default('7d').optional(),
