@@ -4,6 +4,8 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm'
 
 import { Environment } from '@/config'
 
+import { getDatabaseCredentials } from './database.connector'
+
 export const databaseProviders: DynamicModule[] = [
   TypeOrmModule.forRootAsync({
     imports: [ConfigModule],
@@ -26,16 +28,17 @@ export const databaseProviders: DynamicModule[] = [
         timeout: 30000 // 30 seconds query timeout
       }
 
+      const credentials = getDatabaseCredentials(process.env)
+
       const specificOptions: TypeOrmModuleOptions = {
         ...commonOptions,
         type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        database: configService.get<string>('DB_NAME'),
-        username: configService.get<string>('DB_USER'),
-        password: configService.get<string>('DB_PASSWORD'),
-        ssl: false, // Disable SSL for Docker environment
-        uuidExtension: 'pgcrypto'
+        host: credentials.host,
+        port: credentials.port,
+        database: credentials.database,
+        username: credentials.username,
+        password: credentials.password,
+        ssl: credentials.ssl
       }
 
       return specificOptions

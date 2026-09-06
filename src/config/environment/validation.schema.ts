@@ -22,10 +22,32 @@ export const getValidationSchema = (): Joi.ObjectSchema => {
     // External API keys
     OPENAI_API_KEY: Joi.string().optional(),
     // DB credentials
-    DB_HOST: Joi.string().required(),
-    DB_PORT: Joi.number().integer().min(1).max(65535).required(),
-    DB_NAME: Joi.string().required(),
-    DB_USER: Joi.string().required(),
-    DB_PASSWORD: Joi.string().required()
+    DATABASE_URL: Joi.string().optional(),
+    DB_SSL: Joi.string().optional(),
+    DB_HOST: Joi.when('DATABASE_URL', {
+      is: Joi.exist(),
+      then: Joi.string().optional(),
+      otherwise: Joi.string().required()
+    }),
+    DB_PORT: Joi.when('DATABASE_URL', {
+      is: Joi.exist(),
+      then: Joi.number().integer().min(1).max(65535).optional(),
+      otherwise: Joi.number().integer().min(1).max(65535).required()
+    }),
+    DB_NAME: Joi.when('DATABASE_URL', {
+      is: Joi.exist(),
+      then: Joi.string().optional(),
+      otherwise: Joi.string().required()
+    }),
+    DB_USER: Joi.when('DATABASE_URL', {
+      is: Joi.exist(),
+      then: Joi.string().optional(),
+      otherwise: Joi.string().required()
+    }),
+    DB_PASSWORD: Joi.when('DATABASE_URL', {
+      is: Joi.exist(),
+      then: Joi.string().optional(),
+      otherwise: Joi.string().required()
+    })
   }).unknown(true)
 }

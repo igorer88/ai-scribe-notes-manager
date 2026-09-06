@@ -6,6 +6,7 @@ import { DataSource } from 'typeorm'
 import { Patient } from '@/domain/patient/entities/patient.entity'
 import { User } from '@/domain/user/entities/user.entity'
 
+import { getDatabaseCredentials } from './database.connector'
 import { databaseProviders } from './database.provider'
 import { DatabaseSeeder } from './seeds/DatabaseSeeder'
 import { PatientSeeder } from './seeds/PatientSeeder'
@@ -26,13 +27,16 @@ import { UserSeeder } from './seeds/UserSeeder'
     {
       provide: DataSource,
       useFactory: async (): Promise<DataSource> => {
+        const credentials = getDatabaseCredentials(process.env)
+
         const dataSource = new DataSource({
           type: 'postgres',
-          host: process.env.DB_HOST,
-          port: parseInt(process.env.DB_PORT || '5432'),
-          database: process.env.DB_NAME,
-          username: process.env.DB_USER,
-          password: process.env.DB_PASSWORD,
+          host: credentials.host,
+          port: credentials.port,
+          database: credentials.database,
+          username: credentials.username,
+          password: credentials.password,
+          ssl: credentials.ssl,
           entities: [__dirname + '/../**/*.entity{.ts,.js}'],
           migrations: [__dirname + '/migrations/*{.ts,.js}'],
           synchronize: false
