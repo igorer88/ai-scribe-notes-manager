@@ -1,7 +1,9 @@
 import { Controller, Get } from '@nestjs/common'
+import { SkipThrottle } from '@nestjs/throttler'
 
 import { HealthCheckService } from './health-check.service'
 
+@SkipThrottle()
 @Controller('health')
 export class HealthCheckController {
   constructor(private readonly healthCheckService: HealthCheckService) {}

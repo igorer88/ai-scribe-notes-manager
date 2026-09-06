@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
+import { Throttle } from '@nestjs/throttler'
 
 import { CreateUserDto } from '@/domain/user/dto/create-user.dto'
 import { User } from '@/domain/user/entities/user.entity'
@@ -15,12 +16,14 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('register')
   register(@Body() createUserDto: CreateUserDto): Promise<AuthResponse> {
     return this.authService.register(createUserDto)
   }
 
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('login')
   login(@Body() loginAuthDto: LoginAuthDto): Promise<AuthResponse> {
     return this.authService.login(loginAuthDto)

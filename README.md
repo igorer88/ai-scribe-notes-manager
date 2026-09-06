@@ -55,6 +55,14 @@ The application supports AI-powered transcription for voice notes. Configure the
   - Options: `tiny`, `base`, `small`, `medium`, `large` (larger models are more accurate but slower)
 - `WHISPER_ENGINE=openai_whisper` (default: `openai_whisper`)
 
+### API Security
+
+- `THROTTLE_TTL=60` (default: `60`)
+  - Time window (in seconds) for the global request rate limit
+- `THROTTLE_LIMIT=60` (default: `60`)
+  - Maximum requests allowed per IP within the TTL window
+  - `POST /auth/login` and `POST /auth/register` are capped at `5` requests per 60s regardless of the global limit
+
 ### Production (Local with Docker)
 
 For production-like environment with Docker:

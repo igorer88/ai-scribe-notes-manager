@@ -2,7 +2,9 @@ import { join } from 'node:path'
 
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { APP_GUARD } from '@nestjs/core'
 import { ServeStaticModule } from '@nestjs/serve-static'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 
 import {
   aiConfig,
@@ -27,9 +29,24 @@ import { SharedModule } from './shared/shared.module'
       rootPath: join(__dirname, '..', 'web', 'dist'),
       exclude: ['^/api']
     }),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => [
+        {
+          ttl: configService.getOrThrow<number>('api.throttle.ttl'),
+          limit: configService.getOrThrow<number>('api.throttle.limit')
+        }
+      ]
+    }),
     SharedModule,
     DatabaseModule,
     DomainModule
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    }
   ]
 })
 export class AppModule {
