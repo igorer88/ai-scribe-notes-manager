@@ -102,9 +102,12 @@ describe('GeminiProvider', () => {
   })
 
   it('should throw when the Gemini API call fails', async () => {
-    // Spy on logger.error to suppress error logs during test
+    // Capture the provider's error log and replay it tagged as expected so
+    // the test output stays consistent (single-line logs, no stack trace).
+    const logger = provider['logger']
+    const originalLog = logger.log.bind(logger)
     const loggerErrorSpy = jest
-      .spyOn(provider['logger'], 'error')
+      .spyOn(logger, 'error')
       .mockImplementation(() => undefined)
 
     // Arrange
@@ -115,7 +118,9 @@ describe('GeminiProvider', () => {
       'Gemini transcription failed: API error'
     )
 
-    // Restore logger.error
+    originalLog('[Expected] Gemini transcription failed: API error')
+
+    // Restore logger
     loggerErrorSpy.mockRestore()
   })
 })
