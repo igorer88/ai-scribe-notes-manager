@@ -6,6 +6,7 @@ import { Repository } from 'typeorm'
 import { Transcription } from '@/domain/note/entities/transcription.entity'
 
 import { TranscriptionProvider } from '../interfaces/transcription-provider.interface'
+import { GeminiProvider } from '../providers/gemini.provider'
 import { WhisperApiProvider } from '../providers/whisper-api.provider'
 
 @Injectable()
@@ -15,6 +16,7 @@ export class AiTranscriptionService {
   constructor(
     private configService: ConfigService,
     private whisperApiProvider: WhisperApiProvider,
+    private geminiProvider: GeminiProvider,
     @InjectRepository(Transcription)
     private transcriptionRepository: Repository<Transcription>
   ) {}
@@ -29,6 +31,13 @@ export class AiTranscriptionService {
 
     let provider: TranscriptionProvider
     switch (providerType) {
+      case 'gemini':
+        provider = this.geminiProvider
+        break
+      case 'openai':
+        throw new Error(
+          'Transcription provider "openai" is configured but not implemented'
+        )
       default:
         provider = this.whisperApiProvider
         break

@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { Transcription } from '@/domain/note/entities/transcription.entity'
 
+import { GeminiProvider } from './providers/gemini.provider'
 import { WhisperApiProvider } from './providers/whisper-api.provider'
 import { AiTranscriptionService } from './services/transcription.service'
 
@@ -14,7 +15,7 @@ import { AiTranscriptionService } from './services/transcription.service'
     TypeOrmModule.forFeature([Transcription]),
     HttpModule
   ],
-  providers: [AiTranscriptionService, WhisperApiProvider],
+  providers: [AiTranscriptionService, WhisperApiProvider, GeminiProvider],
   exports: [AiTranscriptionService]
 })
 export class AiProcessingModule {}

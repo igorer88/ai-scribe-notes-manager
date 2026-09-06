@@ -6,11 +6,17 @@ import { getRepositoryToken } from '@nestjs/typeorm'
 import { Transcription } from '@/domain/note/entities/transcription.entity'
 
 import { MockTranscriptionProvider } from './mock-transcription.provider'
+import { GeminiProvider } from '../providers/gemini.provider'
 import { WhisperApiProvider } from '../providers/whisper-api.provider'
 import { AiTranscriptionService } from '../services/transcription.service'
 
 describe('AiTranscriptionService', () => {
   let service: AiTranscriptionService
+  let module: TestingModule
+
+  const mockGeminiProvider = {
+    transcribe: jest.fn()
+  }
 
   const mockTranscriptionRepository = {
     create: jest.fn(),
@@ -31,7 +37,7 @@ describe('AiTranscriptionService', () => {
   }
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const testingModule: TestingModule = await Test.createTestingModule({
       providers: [
         AiTranscriptionService,
         {
@@ -45,6 +51,10 @@ describe('AiTranscriptionService', () => {
         {
           provide: WhisperApiProvider,
           useClass: MockTranscriptionProvider
+        },
+        {
+          provide: GeminiProvider,
+          useValue: mockGeminiProvider
         }
       ]
     })
@@ -52,7 +62,9 @@ describe('AiTranscriptionService', () => {
       .useValue(mockLogger)
       .compile()
 
+    module = testingModule
     service = module.get<AiTranscriptionService>(AiTranscriptionService)
+    jest.clearAllMocks()
   })
 
   it('should be defined', () => {
@@ -160,6 +172,78 @@ describe('AiTranscriptionService', () => {
 
       // Restore logger.error
       loggerErrorSpy.mockRestore()
+    })
+
+    it('should use the Gemini provider when configured', async () => {
+      // Arrange
+      const noteId = 'test-note-gemini'
+      const mockAudioFile = {
+        originalname: 'test.mp3',
+        size: 1024,
+        buffer: Buffer.from('mock audio data')
+      } as Express.Multer.File
+
+      const mockGeminiResult = {
+        text: 'Gemini mock transcription',
+        metadata: {
+          provider: 'gemini',
+          model: 'gemini-2.5-flash',
+          processingTime: 10
+        }
+      }
+
+      const mockSavedTranscription = {
+        id: 'transcription-gemini',
+        text: mockGeminiResult.text,
+        segments: [],
+        language: null,
+        metadata: mockGeminiResult.metadata
+      }
+
+      mockConfigService.get.mockReturnValue('gemini')
+      mockGeminiProvider.transcribe.mockImplementationOnce(async () => {
+        await new Promise(resolve => setTimeout(resolve, 1))
+        return mockGeminiResult
+      })
+      mockTranscriptionRepository.create.mockReturnValue(mockSavedTranscription)
+      mockTranscriptionRepository.save.mockResolvedValue(mockSavedTranscription)
+
+      // Act
+      const result = await service.transcribeAudio(noteId, mockAudioFile)
+
+      // Assert
+      expect(mockGeminiProvider.transcribe).toHaveBeenCalledWith(
+        mockAudioFile,
+        { noteId, saveRawFiles: true }
+      )
+      expect(mockTranscriptionRepository.create).toHaveBeenCalledWith({
+        text: mockGeminiResult.text,
+        segments: [],
+        structuredData: {},
+        language: null,
+        metadata: mockGeminiResult.metadata,
+        note: { id: noteId }
+      })
+      expect(result).toEqual(mockSavedTranscription)
+    })
+
+    it('should throw when an unimplemented provider is configured', async () => {
+      // Arrange
+      const noteId = 'test-note-openai'
+      const mockAudioFile = {
+        originalname: 'test.mp3',
+        size: 1024,
+        buffer: Buffer.from('mock audio data')
+      } as Express.Multer.File
+
+      mockConfigService.get.mockReturnValue('openai')
+
+      // Act & Assert
+      await expect(
+        service.transcribeAudio(noteId, mockAudioFile)
+      ).rejects.toThrow(
+        'Transcription provider "openai" is configured but not implemented'
+      )
     })
   })
 })

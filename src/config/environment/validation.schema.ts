@@ -18,14 +18,20 @@ export const getValidationSchema = (): Joi.ObjectSchema => {
     FILE_STORAGE_LOCAL_PATH: Joi.string().default('config/data/uploads'),
     // AI configuration
     AI_TRANSCRIPTION_PROVIDER: Joi.string()
-      .valid('whisperApi', 'openai')
-      .default('whisperApi'),
+      .valid('whisper-api', 'openai', 'gemini')
+      .default('whisper-api'),
     AI_TRANSCRIPTION_WHISPER_API_URL: Joi.string().default(
       'http://localhost:9000'
     ),
     AI_TRANSCRIPTION_OPENAI_MODEL: Joi.string().default('whisper-1'),
+    AI_TRANSCRIPTION_GEMINI_MODEL: Joi.string().default('gemini-2.5-flash'),
     // External API keys
     OPENAI_API_KEY: Joi.string().optional(),
+    GEMINI_API_KEY: Joi.when('AI_TRANSCRIPTION_PROVIDER', {
+      is: 'gemini',
+      then: Joi.string().required(),
+      otherwise: Joi.string().optional()
+    }),
     // DB credentials
     DATABASE_URL: Joi.string().optional(),
     DB_SSL: Joi.string().optional(),
