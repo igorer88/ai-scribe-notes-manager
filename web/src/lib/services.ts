@@ -1,5 +1,3 @@
-import { useAuthStore } from '@/stores/authStore'
-
 import { api } from './api'
 import type {
   AuthResponse,
@@ -62,17 +60,10 @@ export const noteService = {
     dto: CreateNoteDto,
     audioFile?: File
   ): Promise<Note> {
-    const user = useAuthStore.getState().user
-
-    if (!user) {
-      throw new Error('You must be logged in to create a note')
-    }
-
     if (dto.isVoiceNote) {
       // Voice notes: send as FormData
       const formData = new FormData()
       formData.append('isVoiceNote', dto.isVoiceNote.toString())
-      formData.append('userId', user.id)
       if (audioFile) {
         formData.append('audio', audioFile)
       }
@@ -80,8 +71,7 @@ export const noteService = {
     } else {
       // Text notes: send as JSON without isVoiceNote
       const payload = {
-        content: dto.content || '',
-        userId: user.id
+        content: dto.content || ''
       }
       return api.post<Note>(`/patients/${patientId}/notes`, payload)
     }
