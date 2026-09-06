@@ -37,7 +37,6 @@ export interface Transcription {
 export interface CreateNoteDto {
   content?: string
   isVoiceNote: boolean
-  userId: string
 }
 
 export interface LoginCredentials {

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 
+import { CurrentUser } from '@/domain/auth/decorators/current-user.decorator'
 import { CreateNoteDto } from '@/domain/note/dto'
 import { Note } from '@/domain/note/entities/note.entity'
 import { NoteService } from '@/domain/note/note.service'
@@ -29,52 +30,67 @@ export class PatientController {
   ) {}
 
   @Post()
-  create(@Body() createPatientDto: CreatePatientDto): Promise<Patient> {
-    return this.patientService.create(createPatientDto)
+  create(
+    @CurrentUser('sub') userId: string,
+    @Body() createPatientDto: CreatePatientDto
+  ): Promise<Patient> {
+    return this.patientService.create(createPatientDto, userId)
   }
 
   @Get()
-  findAll(): Promise<Patient[]> {
-    return this.patientService.findAll()
+  findAll(@CurrentUser('sub') userId: string): Promise<Patient[]> {
+    return this.patientService.findAll(userId)
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Patient> {
-    return this.patientService.findOne(id)
+  findOne(
+    @CurrentUser('sub') userId: string,
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<Patient> {
+    return this.patientService.findOne(id, userId)
   }
 
   @Patch(':id')
   update(
+    @CurrentUser('sub') userId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePatientDto: UpdatePatientDto
   ): Promise<Patient> {
-    return this.patientService.update(id, updatePatientDto)
+    return this.patientService.update(id, updatePatientDto, userId)
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.patientService.remove(id)
+  remove(
+    @CurrentUser('sub') userId: string,
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<void> {
+    return this.patientService.remove(id, userId)
   }
 
   @Patch(':id/recover')
-  recover(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.patientService.recover(id)
+  recover(
+    @CurrentUser('sub') userId: string,
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<void> {
+    return this.patientService.recover(id, userId)
   }
 
   @Post(':patientId/notes')
   @UseInterceptors(FileInterceptor('audio'))
   createNoteForPatient(
+    @CurrentUser('sub') userId: string,
     @Param('patientId', ParseUUIDPipe) patientId: string,
     @Body() createNoteDto: CreateNoteDto,
     @UploadedFile() audioFile?: Express.Multer.File
   ): Promise<Note> {
-    return this.noteService.create(createNoteDto, patientId, audioFile)
+    return this.noteService.create(createNoteDto, patientId, userId, audioFile)
   }
 
   @Get(':patientId/notes')
   findAllNotesForPatient(
+    @CurrentUser('sub') userId: string,
     @Param('patientId', ParseUUIDPipe) patientId: string
   ): Promise<Note[]> {
-    return this.noteService.findAllByPatientId(patientId)
+    return this.noteService.findAllByPatientId(patientId, userId)
   }
 }

@@ -14,6 +14,8 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 
+import { CurrentUser } from '@/domain/auth/decorators/current-user.decorator'
+
 import { UpdateNoteDto } from './dto'
 import { Note } from './entities/note.entity'
 import { Transcription } from './entities/transcription.entity'
@@ -24,41 +26,50 @@ export class NoteController {
   constructor(private readonly noteService: NoteService) {}
 
   @Get()
-  findAll(): Promise<Note[]> {
-    return this.noteService.findAll()
+  findAll(@CurrentUser('sub') userId: string): Promise<Note[]> {
+    return this.noteService.findAll(userId)
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Note> {
-    return this.noteService.findOne(id)
+  findOne(
+    @CurrentUser('sub') userId: string,
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<Note> {
+    return this.noteService.findOne(id, userId)
   }
 
   @Get(':id/transcription')
   getTranscription(
+    @CurrentUser('sub') userId: string,
     @Param('id', ParseUUIDPipe) id: string
   ): Promise<Transcription | null> {
-    return this.noteService.getTranscription(id)
+    return this.noteService.getTranscription(id, userId)
   }
 
   @Patch(':id')
   update(
+    @CurrentUser('sub') userId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateNoteDto: UpdateNoteDto
   ): Promise<Note> {
-    return this.noteService.update(id, updateNoteDto)
+    return this.noteService.update(id, updateNoteDto, userId)
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.noteService.remove(id)
+  remove(
+    @CurrentUser('sub') userId: string,
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<void> {
+    return this.noteService.remove(id, userId)
   }
 
   @Get(':id/audio')
   async getAudioFile(
+    @CurrentUser('sub') userId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Res() response: Response
   ): Promise<void> {
-    const filePath = await this.noteService.getAudioFile(id)
+    const filePath = await this.noteService.getAudioFile(id, userId)
     const fileStat = await stat(filePath)
 
     response.set({
@@ -73,7 +84,10 @@ export class NoteController {
   }
 
   @Patch(':id/recover')
-  recover(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.noteService.recover(id)
+  recover(
+    @CurrentUser('sub') userId: string,
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<void> {
+    return this.noteService.recover(id, userId)
   }
 }

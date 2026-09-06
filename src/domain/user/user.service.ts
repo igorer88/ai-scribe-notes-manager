@@ -23,8 +23,9 @@ export class UserService {
     return this.usersRepository.save(user)
   }
 
-  async findAll(): Promise<User[]> {
-    return this.usersRepository.find()
+  async findAllByUserId(userId: string): Promise<User[]> {
+    const user = await this.usersRepository.findOneBy({ id: userId })
+    return user ? [user] : []
   }
 
   async findOne(id: string): Promise<User> {
