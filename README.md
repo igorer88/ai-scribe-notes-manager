@@ -62,6 +62,8 @@ The application supports AI-powered transcription for voice notes. Configure the
 - `THROTTLE_LIMIT=60` (default: `60`)
   - Maximum requests allowed per IP within the TTL window
   - `POST /auth/login` and `POST /auth/register` are capped at `5` requests per 60s regardless of the global limit
+- `API_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000` (default: `http://localhost:5173,http://localhost:3000`)
+  - Comma-separated list of origins allowed to call the API from browsers (CORS)
 
 ### Production (Local with Docker)
 

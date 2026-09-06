@@ -16,6 +16,7 @@ export const getValidationSchema = (): Joi.ObjectSchema => {
     JWT_EXPIRES_IN: Joi.string().default('7d').optional(),
     THROTTLE_TTL: Joi.number().integer().min(1).default(60).optional(),
     THROTTLE_LIMIT: Joi.number().integer().min(1).default(60).optional(),
+    API_ALLOWED_ORIGINS: Joi.string().optional(),
     FILE_STORAGE_TYPE: Joi.string().valid('local').default('local'),
     FILE_STORAGE_LOCAL_PATH: Joi.string().default('config/data/uploads'),
     // AI configuration
