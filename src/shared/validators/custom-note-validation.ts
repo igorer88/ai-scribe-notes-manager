@@ -9,9 +9,7 @@ import {
 import { CreateNoteDto } from '@/domain/note/dto'
 
 @ValidatorConstraint({ async: false })
-export class IsAudioFilePathValidConstraint
-  implements ValidatorConstraintInterface
-{
+export class IsAudioFilePathValidConstraint implements ValidatorConstraintInterface {
   validate(audioFilePath: string, args: ValidationArguments): boolean {
     const obj = args.object as CreateNoteDto
     if (obj.isVoiceNote) {
