@@ -1,12 +1,20 @@
 import { create } from 'zustand'
+
 import { authService } from '@/lib/services'
-import type { User } from '@/lib/types'
+import {
+  clearAccessToken,
+  getAccessToken,
+  setAccessToken
+} from '@/lib/token'
+import type { LoginCredentials, User } from '@/lib/types'
 
 interface AuthState {
   user: User | null
   isLoading: boolean
+  isInitialized: boolean
   error: string | null
-  login: (email: string, password: string) => Promise<void>
+  login: (credentials: LoginCredentials) => Promise<void>
+  register: (credentials: LoginCredentials) => Promise<void>
   logout: () => void
   initialize: () => Promise<void>
 }
@@ -14,12 +22,14 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   isLoading: false,
+  isInitialized: false,
   error: null,
 
-  login: async (_email: string, _password: string) => {
+  login: async (credentials) => {
     set({ isLoading: true, error: null })
     try {
-      const user = await authService.getCurrentUser()
+      const { accessToken, user } = await authService.login(credentials)
+      setAccessToken(accessToken)
       set({ user, isLoading: false })
     } catch (error) {
       set({
@@ -29,23 +39,47 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
+  register: async (credentials) => {
+    set({ isLoading: true, error: null })
+    try {
+      const { accessToken, user } = await authService.register(credentials)
+      setAccessToken(accessToken)
+      set({ user, isLoading: false })
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Registration failed',
+        isLoading: false
+      })
+    }
+  },
+
   logout: () => {
+    clearAccessToken()
     set({ user: null, error: null })
   },
 
   initialize: async () => {
-    const { user } = get()
-    if (user) return
+    const { user, isInitialized } = get()
+    if (user || isInitialized) return
 
     set({ isLoading: true, error: null })
+
+    const token = getAccessToken()
+    if (!token) {
+      set({ isLoading: false, isInitialized: true })
+      return
+    }
+
     try {
-      // Mock login for demo
-      const demoUser = await authService.getCurrentUser()
-      set({ user: demoUser, isLoading: false })
-    } catch (error) {
+      const currentUser = await authService.getCurrentUser()
+      set({ user: currentUser, isLoading: false, isInitialized: true })
+    } catch {
+      clearAccessToken()
       set({
-        error: error instanceof Error ? error.message : 'Failed to initialize',
-        isLoading: false
+        user: null,
+        isLoading: false,
+        isInitialized: true,
+        error: null
       })
     }
   }

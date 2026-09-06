@@ -1,28 +1,27 @@
+import { useAuthStore } from '@/stores/authStore'
+
 import { api } from './api'
 import type {
-  User,
-  Patient,
-  Note,
-  Transcription,
+  AuthResponse,
   CreateNoteDto,
-  LoginCredentials
+  LoginCredentials,
+  Note,
+  Patient,
+  Transcription,
+  User
 } from './types'
 
 export const authService = {
-  async login(credentials: LoginCredentials): Promise<User> {
-    return api.post<User>('/auth/login', credentials)
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    return api.post<AuthResponse>('/auth/login', credentials)
+  },
+
+  async register(credentials: LoginCredentials): Promise<AuthResponse> {
+    return api.post<AuthResponse>('/auth/register', credentials)
   },
 
   async getCurrentUser(): Promise<User> {
-    const users = await api.get<User[]>('/users')
-    const [demoUser] = users
-    return demoUser
-  }
-}
-
-export const userService = {
-  async getById(id: string): Promise<User> {
-    return api.get<User>(`/users/${id}`)
+    return api.get<User>('/auth/me')
   }
 }
 
@@ -63,7 +62,11 @@ export const noteService = {
     dto: CreateNoteDto,
     audioFile?: File
   ): Promise<Note> {
-    const user = await authService.getCurrentUser()
+    const user = useAuthStore.getState().user
+
+    if (!user) {
+      throw new Error('You must be logged in to create a note')
+    }
 
     if (dto.isVoiceNote) {
       // Voice notes: send as FormData
