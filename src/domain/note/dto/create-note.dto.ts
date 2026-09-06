@@ -2,7 +2,6 @@ import {
   IsString,
   IsNotEmpty,
   IsBoolean,
-  IsUUID,
   ValidateIf,
   IsOptional
 } from 'class-validator'
@@ -22,8 +21,4 @@ export class CreateNoteDto {
   @IsOptional()
   @IsBoolean()
   isVoiceNote?: boolean
-
-  @IsUUID()
-  @IsNotEmpty()
-  userId: string
 }

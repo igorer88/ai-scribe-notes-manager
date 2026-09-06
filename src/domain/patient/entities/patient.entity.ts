@@ -7,16 +7,21 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
+  ManyToOne,
   Check
 } from 'typeorm'
 
 import type { Note } from '@/domain/note/entities/note.entity'
+import type { User } from '@/domain/user/entities/user.entity'
 
 @Entity('patients')
 @Check('CHK_Patient_DateOfBirth', '"dateOfBirth" <= CURRENT_DATE')
 export class Patient {
   @PrimaryGeneratedColumn('uuid')
   id: string
+
+  @ManyToOne('User', 'patients')
+  user: User
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   name: string

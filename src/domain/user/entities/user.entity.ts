@@ -11,6 +11,7 @@ import {
 } from 'typeorm'
 
 import type { Note } from '@/domain/note/entities/note.entity'
+import type { Patient } from '@/domain/patient/entities/patient.entity'
 
 @Entity('users')
 @Unique('UQ_User_Username', ['username'])
@@ -27,6 +28,9 @@ export class User {
 
   @OneToMany('Note', 'user')
   notes: Note[]
+
+  @OneToMany('Patient', 'user')
+  patients: Patient[]
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date
