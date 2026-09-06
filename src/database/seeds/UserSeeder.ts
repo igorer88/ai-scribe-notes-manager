@@ -8,24 +8,27 @@ export class UserSeeder implements Seeder {
   async run(dataSource: DataSource): Promise<void> {
     const repository = dataSource.getRepository(User)
 
-    // Check if demo user already exists
+    // Upsert demo user - create if missing, keep existing
     const existingUser = await repository.findOne({
       where: { username: 'demo' }
     })
 
-    if (existingUser) {
-      console.log('Demo user already exists, skipping creation')
-      return
-    }
-
     const hashedPassword = await bcrypt.hash('demo', 10)
 
-    const demoUser = repository.create({
-      username: 'demo',
-      password: hashedPassword
-    })
-
-    await repository.save(demoUser)
-    console.log('Demo user created successfully')
+    if (existingUser) {
+      // Update password if it changed (compare stored hash vs 'demo')
+      if (existingUser.password !== hashedPassword) {
+        existingUser.password = hashedPassword
+        await repository.save(existingUser)
+      }
+      console.log('Demo user already exists, password synchronized')
+    } else {
+      const demoUser = repository.create({
+        username: 'demo',
+        password: hashedPassword
+      })
+      await repository.save(demoUser)
+      console.log('Demo user created successfully')
+    }
   }
 }

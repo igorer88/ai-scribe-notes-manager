@@ -10,5 +10,10 @@ export enum Environment {
   /**
    * Production environment.
    */
-  Production = 'production'
+  Production = 'production',
+
+  /**
+   * Staging environment (production-like build with demo seeding enabled).
+   */
+  Staging = 'staging'
 }
