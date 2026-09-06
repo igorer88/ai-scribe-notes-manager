@@ -12,7 +12,7 @@ export class DatabaseSeeder implements Seeder {
   async run(): Promise<void> {
     // Reset mode: truncate dependent tables first, then seed
     await this.dataSource.query(`
-      TRUNCATE "transcription", "note", "patient" CASCADE
+      TRUNCATE "transcriptions", "notes", "patients" CASCADE
     `)
     await runSeeder(this.dataSource, UserSeeder)
     await runSeeder(this.dataSource, PatientSeeder)

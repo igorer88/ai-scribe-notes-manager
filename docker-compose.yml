@@ -10,7 +10,7 @@ services:
       args:
         NODE_VERSION: 22-alpine
         PNPM_REGISTRY: "https://registry.npmjs.org/"
-      target: ${BUILD_STAGE:-prod}
+      target: ${BUILD_STAGE:-staging}
     env_file:
       - .env
     ports:

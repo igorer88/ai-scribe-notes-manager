@@ -16,11 +16,16 @@ ENV API_PORT=3000 \
   SYSTEM_UID=2000 \
   SYSTEM_GID=2000
 
+# Re-declare global build arguments so their values are available to instructions in this stage
+ARG NPM_REGISTRY
+ARG YARN_REGISTRY
+ARG PNPM_REGISTRY
+
 # Install Corepack and enable it
 RUN corepack enable
 
-# Install pnpm globally using the registry argument
-RUN npm install -g pnpm @nestjs/cli --registry=$PNPM_REGISTRY --force
+# Install pnpm (pinned to the lockfile-compatible version) and NestJS CLI globally
+RUN npm install -g pnpm@11.3.0 @nestjs/cli --registry=$NPM_REGISTRY --force
 
 # Set working directory
 WORKDIR /app
@@ -28,10 +33,10 @@ WORKDIR /app
 # Copy package.json and pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml ./
 
-# Set the appropriate registry for pnpm
-RUN if [ -n "$NPM_REGISTRY" ]; then pnpm config set registry "$NPM_REGISTRY"; \
-  elif [ -n "$YARN_REGISTRY" ]; then pnpm config set registry "$YARN_REGISTRY"; \
-  else pnpm config set registry "$PNPM_REGISTRY"; \
+# Set the appropriate registry for pnpm (persisted to $HOME/.npmrc so it survives across build layers)
+RUN if [ -n "$NPM_REGISTRY" ]; then echo "registry=$NPM_REGISTRY" > $HOME/.npmrc; \
+  elif [ -n "$YARN_REGISTRY" ]; then echo "registry=$YARN_REGISTRY" > $HOME/.npmrc; \
+  else echo "registry=$PNPM_REGISTRY" > $HOME/.npmrc; \
   fi
 
 # Fetch dependencies to cache them
@@ -103,6 +108,35 @@ RUN pnpm install && pnpm build
 
 # Use system user
 USER ${SYSTEM_USER}
+
+# Staging stage (production-like build that keeps dev deps for migrations/seeding)
+FROM base AS staging
+
+# Set NODE_ENV to staging
+ENV NODE_ENV=staging
+
+# Set default database host for Docker environment
+ENV DB_HOST=postgres
+
+# Install postgresql-client for database connectivity checks
+RUN apk add --no-cache postgresql-client
+
+# Copy the rest of the application code with ownership set to SYSTEM_USER
+COPY --chown=${SYSTEM_USER}:${SYSTEM_USER} . .
+
+# Copy built frontend from frontend-build stage
+COPY --from=frontend-build /app/web/dist ./web/dist
+
+# Copy docker entrypoint script
+COPY --chown=${SYSTEM_USER}:${SYSTEM_USER} config/scripts/docker-entrypoint.sh ./config/scripts/docker-entrypoint.sh
+RUN chmod +x ./config/scripts/docker-entrypoint.sh
+
+# Install full dependencies (keeps ts-node/typeorm-extension for migration:run and seed) and build the project
+RUN pnpm install --frozen-lockfile && pnpm build
+
+# Entrypoint runs migrations + seeders on first boot, then starts the application
+ENTRYPOINT ["/app/config/scripts/docker-entrypoint.sh"]
+CMD []
 
 # Production stage
 FROM base AS prod
