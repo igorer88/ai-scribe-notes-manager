@@ -102,6 +102,11 @@ describe('GeminiProvider', () => {
   })
 
   it('should throw when the Gemini API call fails', async () => {
+    // Spy on logger.error to suppress error logs during test
+    const loggerErrorSpy = jest
+      .spyOn(provider['logger'], 'error')
+      .mockImplementation(() => undefined)
+
     // Arrange
     genaiClient.models.generateContent.mockRejectedValue(new Error('API error'))
 
@@ -109,5 +114,8 @@ describe('GeminiProvider', () => {
     await expect(provider.transcribe(mockAudioFile)).rejects.toThrow(
       'Gemini transcription failed: API error'
     )
+
+    // Restore logger.error
+    loggerErrorSpy.mockRestore()
   })
 })
