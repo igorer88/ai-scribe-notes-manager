@@ -121,11 +121,13 @@ run_seeders() {
 init_database() {
   if db_has_schema; then
     echo "🔍 Schema already exists"
+    echo "📦 Running migrations (idempotent, applies only pending ones)..."
+    run_migrations
     if db_is_empty; then
       echo "🌱 Schema present but empty, seeding..."
       run_seeders
     else
-      echo "📋 Database already initialized, skipping setup..."
+      echo "📋 Database already initialized, skipping seeders..."
     fi
   else
     echo "🔍 No schema found, running migrations and seeding..."
