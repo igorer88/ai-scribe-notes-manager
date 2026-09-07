@@ -5,7 +5,7 @@ import {
   createAudioUploadOptions,
   isAudioFile,
   mbToBytes
-} from '../audio-upload.util'
+} from '@/domain/note/audio-upload.util'
 
 describe('AudioUploadUtil', () => {
   const audioFile = (mimetype: string): Express.Multer.File =>
