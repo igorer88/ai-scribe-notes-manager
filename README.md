@@ -64,6 +64,8 @@ The application supports AI-powered transcription for voice notes. Configure the
   - `POST /auth/login` and `POST /auth/register` are capped at `5` requests per 60s regardless of the global limit
 - `API_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000` (default: `http://localhost:5173,http://localhost:3000`)
   - Comma-separated list of origins allowed to call the API from browsers (CORS)
+- `MAX_AUDIO_UPLOAD_MB=20` (default: `20`)
+  - Maximum size in MB for uploaded voice-note audio files (aligned with Gemini's 20 MB inline limit)
 
 ### Production (Local with Docker)
 
