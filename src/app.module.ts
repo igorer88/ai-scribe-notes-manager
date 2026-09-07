@@ -11,7 +11,8 @@ import {
   apiConfig,
   dbConfig,
   storageConfig,
-  getValidationSchema
+  getValidationSchema,
+  HealthCheckModule
 } from './config'
 import { DatabaseModule } from './database/database.module'
 import { DomainModule } from './domain/domain.module'
@@ -27,7 +28,7 @@ import { SharedModule } from './shared/shared.module'
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'web', 'dist'),
-      exclude: ['^/api']
+      exclude: ['/api/{*splat}', '/health/{*splat}']
     }),
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
@@ -40,7 +41,8 @@ import { SharedModule } from './shared/shared.module'
     }),
     SharedModule,
     DatabaseModule,
-    DomainModule
+    DomainModule,
+    HealthCheckModule
   ],
   providers: [
     {

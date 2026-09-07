@@ -11,7 +11,7 @@ export const getValidationSchema = (): Joi.ObjectSchema => {
         Environment.Staging
       )
       .default(Environment.Development),
-    API_PORT: Joi.number().integer().min(1).max(65535).default(3000).required(),
+    API_PORT: Joi.number().integer().min(1).max(65535).optional(),
     API_SECRET_KEY: Joi.string().required(),
     JWT_EXPIRES_IN: Joi.string().default('7d').optional(),
     THROTTLE_TTL: Joi.number().integer().min(1).default(60).optional(),

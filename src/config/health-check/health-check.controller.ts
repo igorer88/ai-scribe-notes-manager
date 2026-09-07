@@ -1,9 +1,12 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, ServiceUnavailableException } from '@nestjs/common'
 import { SkipThrottle } from '@nestjs/throttler'
+
+import { Public } from '@/domain/auth/decorators/public.decorator'
 
 import { HealthCheckService } from './health-check.service'
 
 @SkipThrottle()
+@Public()
 @Controller('health')
 export class HealthCheckController {
   constructor(private readonly healthCheckService: HealthCheckService) {}
@@ -17,7 +20,7 @@ export class HealthCheckController {
   async checkDatabaseConnection(): Promise<{ status: string }> {
     const isConnected = await this.healthCheckService.isDatabaseConnected()
     if (!isConnected) {
-      return { status: 'Database is not connected' }
+      throw new ServiceUnavailableException('Database is not connected')
     }
 
     return { status: 'Database is connected' }
