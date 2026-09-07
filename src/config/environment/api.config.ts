@@ -1,5 +1,7 @@
 import { registerAs } from '@nestjs/config'
 
+import { Environment } from '../enums'
+
 export const DEFAULT_ALLOWED_ORIGINS =
   'http://localhost:5173,http://localhost:3000'
 
@@ -18,6 +20,16 @@ export const resolveMaxAudioUploadMb = (value?: string): number => {
     : DEFAULT_MAX_AUDIO_UPLOAD_MB
 }
 
+export const resolveSwaggerEnabled = (
+  envOverride?: string,
+  nodeEnv?: string
+): boolean => {
+  if (envOverride !== undefined && envOverride !== '') {
+    return envOverride === 'true'
+  }
+  return nodeEnv === Environment.Development
+}
+
 export const apiConfig = registerAs('api', () => ({
   environment: process.env.NODE_ENV,
   port: process.env.API_PORT ? parseInt(process.env.API_PORT) : undefined,
@@ -25,6 +37,10 @@ export const apiConfig = registerAs('api', () => ({
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   allowedOrigins: parseAllowedOrigins(process.env.API_ALLOWED_ORIGINS),
   maxAudioUploadMb: resolveMaxAudioUploadMb(process.env.MAX_AUDIO_UPLOAD_MB),
+  swaggerEnabled: resolveSwaggerEnabled(
+    process.env.API_SWAGGER_ENABLED,
+    process.env.NODE_ENV
+  ),
   throttle: {
     ttl: process.env.THROTTLE_TTL ? parseInt(process.env.THROTTLE_TTL) : 60,
     limit: process.env.THROTTLE_LIMIT

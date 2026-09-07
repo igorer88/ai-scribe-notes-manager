@@ -18,6 +18,7 @@ export const getValidationSchema = (): Joi.ObjectSchema => {
     THROTTLE_LIMIT: Joi.number().integer().min(1).default(60).optional(),
     API_ALLOWED_ORIGINS: Joi.string().optional(),
     MAX_AUDIO_UPLOAD_MB: Joi.number().integer().min(1).default(20).optional(),
+    API_SWAGGER_ENABLED: Joi.string().optional(),
     FILE_STORAGE_TYPE: Joi.string().valid('local').default('local'),
     FILE_STORAGE_LOCAL_PATH: Joi.string().default('config/data/uploads'),
     // AI configuration

@@ -66,6 +66,8 @@ The application supports AI-powered transcription for voice notes. Configure the
   - Comma-separated list of origins allowed to call the API from browsers (CORS)
 - `MAX_AUDIO_UPLOAD_MB=20` (default: `20`)
   - Maximum size in MB for uploaded voice-note audio files (aligned with Gemini's 20 MB inline limit)
+- `API_SWAGGER_ENABLED=false` (default: enabled only in `NODE_ENV=development`)
+  - Set to `true` to expose the Swagger UI (`/docs`) on staging/production
 
 ### Production (Local with Docker)
 
