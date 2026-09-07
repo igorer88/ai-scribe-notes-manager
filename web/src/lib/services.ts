@@ -1,4 +1,5 @@
 import { api } from './api'
+import { API_BASE_URL } from './env'
 import type {
   AuthResponse,
   CreateNoteDto,
@@ -51,7 +52,7 @@ export const noteService = {
   },
 
   async getAudioFile(id: string): Promise<string> {
-    const url = `${import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1'}/notes/${id}/audio`
+    const url = `${API_BASE_URL}/notes/${id}/audio`
     return url
   },
 

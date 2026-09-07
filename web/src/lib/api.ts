@@ -1,7 +1,5 @@
+import { API_BASE_URL } from './env'
 import { clearAccessToken, getAccessToken } from './token'
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1'
 
 function handleUnauthorized(response: Response): void {
   if (response.status === 401) {
