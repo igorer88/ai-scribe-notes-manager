@@ -6,6 +6,7 @@ import {
   ValidationPipe,
   VersioningType
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import helmet from 'helmet'
 
@@ -50,14 +51,20 @@ export function setup(app: INestApplication): INestApplication {
 
   app.use(helmet())
 
-  const appMetadata = getAppMetadata()
-  const config = new DocumentBuilder()
-    .setTitle(appMetadata.name)
-    .setDescription(appMetadata.description)
-    .setVersion(appMetadata.version)
-    .build()
-  const document = SwaggerModule.createDocument(app, config)
-  SwaggerModule.setup('docs', app, document)
+  const swaggerEnabled = app
+    .get(ConfigService)
+    .get<boolean>('api.swaggerEnabled')
+
+  if (swaggerEnabled) {
+    const appMetadata = getAppMetadata()
+    const config = new DocumentBuilder()
+      .setTitle(appMetadata.name)
+      .setDescription(appMetadata.description)
+      .setVersion(appMetadata.version)
+      .build()
+    const document = SwaggerModule.createDocument(app, config)
+    SwaggerModule.setup('docs', app, document)
+  }
 
   return app
 }

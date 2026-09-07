@@ -55,6 +55,20 @@ The application supports AI-powered transcription for voice notes. Configure the
   - Options: `tiny`, `base`, `small`, `medium`, `large` (larger models are more accurate but slower)
 - `WHISPER_ENGINE=openai_whisper` (default: `openai_whisper`)
 
+### API Security
+
+- `THROTTLE_TTL=60` (default: `60`)
+  - Time window (in seconds) for the global request rate limit
+- `THROTTLE_LIMIT=60` (default: `60`)
+  - Maximum requests allowed per IP within the TTL window
+  - `POST /auth/login` and `POST /auth/register` are capped at `5` requests per 60s regardless of the global limit
+- `API_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000` (default: `http://localhost:5173,http://localhost:3000`)
+  - Comma-separated list of origins allowed to call the API from browsers (CORS)
+- `MAX_AUDIO_UPLOAD_MB=20` (default: `20`)
+  - Maximum size in MB for uploaded voice-note audio files (aligned with Gemini's 20 MB inline limit)
+- `API_SWAGGER_ENABLED=false` (default: enabled only in `NODE_ENV=development`)
+  - Set to `true` to expose the Swagger UI (`/docs`) on staging/production
+
 ### Production (Local with Docker)
 
 For production-like environment with Docker:

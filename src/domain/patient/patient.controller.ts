@@ -12,7 +12,9 @@ import {
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 
+import { resolveMaxAudioUploadMb } from '@/config/environment/api.config'
 import { CurrentUser } from '@/domain/auth/decorators/current-user.decorator'
+import { createAudioUploadOptions } from '@/domain/note/audio-upload.util'
 import { CreateNoteDto } from '@/domain/note/dto'
 import { Note } from '@/domain/note/entities/note.entity'
 import { NoteService } from '@/domain/note/note.service'
@@ -76,7 +78,12 @@ export class PatientController {
   }
 
   @Post(':patientId/notes')
-  @UseInterceptors(FileInterceptor('audio'))
+  @UseInterceptors(
+    FileInterceptor(
+      'audio',
+      createAudioUploadOptions(resolveMaxAudioUploadMb())
+    )
+  )
   createNoteForPatient(
     @CurrentUser('sub') userId: string,
     @Param('patientId', ParseUUIDPipe) patientId: string,
