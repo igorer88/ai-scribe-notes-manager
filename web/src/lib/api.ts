@@ -13,6 +13,27 @@ function handleUnauthorized(response: Response): void {
   }
 }
 
+async function parseError(response: Response): Promise<string> {
+  if (response.status === 429) {
+    return 'Too many attempts, please wait and try again'
+  }
+
+  try {
+    const body = await response.json()
+    const message = body?.message
+    if (Array.isArray(message)) {
+      return message.join(', ')
+    }
+    if (typeof message === 'string' && message.length > 0) {
+      return message
+    }
+  } catch {
+    // fall through to the generic message
+  }
+
+  return `API Error: ${response.status} ${response.statusText}`
+}
+
 async function parseResponse<T>(response: Response): Promise<T> {
   const contentLength = response.headers.get('content-length')
   if (contentLength === '0' || response.status === 204) {
@@ -45,7 +66,7 @@ export const api = {
 
     if (!response.ok) {
       handleUnauthorized(response)
-      throw new Error(`API Error: ${response.status} ${response.statusText}`)
+      throw new Error(await parseError(response))
     }
 
     return parseResponse<T>(response)

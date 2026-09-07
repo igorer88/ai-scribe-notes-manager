@@ -64,6 +64,7 @@ The application supports AI-powered transcription for voice notes. Configure the
   - `POST /auth/login` and `POST /auth/register` are capped at `5` requests per 60s regardless of the global limit
 - `API_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000` (default: `http://localhost:5173,http://localhost:3000`)
   - Comma-separated list of origins allowed to call the API from browsers (CORS)
+  - Add the deployed frontend origin (e.g. the Vite dev server at `http://localhost:5173` or a staging SPA) here; the SPA built into the API itself is same-origin and needs no entry
 - `MAX_AUDIO_UPLOAD_MB=20` (default: `20`)
   - Maximum size in MB for uploaded voice-note audio files (aligned with Gemini's 20 MB inline limit)
 - `API_SWAGGER_ENABLED=false` (default: enabled only in `NODE_ENV=development`)
@@ -184,7 +185,7 @@ This section outlines the planned development steps for the AI Voice Note Manage
   - ✅ Patient Detail View (displaying statistics, and associated notes).
   - ✅ Component for creating new notes (text area, audio recording/upload, patient association).
   - ✅ Display component for notes (content, audio player, transcription).
-  - [ ] Login/Registration pages.
+  - ✅ Login/Registration pages.
   - [ ] Search bar and filter options.
 
 ## License

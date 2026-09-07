@@ -19,12 +19,14 @@ export function RegisterPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [mismatchError, setMismatchError] = useState<string | null>(null)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
 
+    setMismatchError(null)
     if (password !== confirmPassword) {
-      alert('Passwords do not match')
+      setMismatchError('Passwords do not match')
       return
     }
 
@@ -51,7 +53,7 @@ export function RegisterPage() {
               <Input
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={e => setUsername(e.target.value)}
                 placeholder="Choose a username"
                 autoComplete="username"
                 required
@@ -63,7 +65,7 @@ export function RegisterPage() {
               <Input
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 placeholder="At least 6 characters"
                 autoComplete="new-password"
                 required
@@ -76,7 +78,7 @@ export function RegisterPage() {
               <Input
                 type="password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={e => setConfirmPassword(e.target.value)}
                 placeholder="Repeat your password"
                 autoComplete="new-password"
                 required
@@ -84,9 +86,9 @@ export function RegisterPage() {
               />
             </div>
 
-            {error && (
+            {(error || mismatchError) && (
               <div className="text-red-600 dark:text-red-400 text-sm">
-                {error}
+                {error || mismatchError}
               </div>
             )}
 
