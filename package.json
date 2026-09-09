@@ -34,6 +34,7 @@
     "migration:run": "pnpm typeorm migration:run",
     "migration:revert": "pnpm typeorm migration:revert",
     "seed": "ts-node -r tsconfig-paths/register src/database/run-seeds.ts",
+    "seed:boot": "ts-node -r tsconfig-paths/register src/database/run-demo-seed.ts",
     "prepare": "husky"
   },
   "dependencies": {
