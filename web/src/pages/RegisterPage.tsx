@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
+import { AuthBrand } from '@/components/AuthBrand'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -39,15 +40,16 @@ export function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
+      <Card className="w-[min(88vw,32rem)] sm:min-w-[28rem]">
+        <CardHeader className="px-10 pt-8 pb-6">
+          <AuthBrand />
           <CardTitle>Create an account</CardTitle>
           <CardDescription>
             Register to start writing clinical notes
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent className="px-10 pt-2 pb-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <label className="text-sm font-medium">Username</label>
               <Input

@@ -20,18 +20,11 @@ export function Layout({ children }: LayoutProps) {
     }
   }, [user, fetchPatients, fetchNotes])
 
-  useEffect(() => {
-    // Set dark mode by default
-    document.documentElement.classList.add('dark')
-  }, [])
-
   return (
     <div className="h-screen flex flex-col bg-background">
       <Header />
       <main className="flex-1 flex justify-center overflow-auto">
-        <div className="max-w-7xl px-4 py-8">
-          {children}
-        </div>
+        <div className="max-w-7xl px-4 py-8">{children}</div>
       </main>
     </div>
   )
