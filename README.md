@@ -10,6 +10,14 @@
 
 This project is the backend for the AI Voice Note Manager Web App, built with NestJS. It provides APIs for managing patients, notes (both written and voice), and integrates with AI services for transcription, summarization, and keyword extraction. The database used is PostgreSQL.
 
+## Live demo
+
+A live deployment of the app is available at <https://ai-scribe-notes-manager.onrender.com>.
+
+- **Demo user:** `demo` / `demo`
+
+The demo account is preloaded with sample patients and notes (audio transcription requires a configured AI provider).
+
 ## Technologies
 
 - **Backend:** NestJS (TypeScript)
