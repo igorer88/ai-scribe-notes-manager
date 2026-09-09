@@ -15,6 +15,7 @@ import {
   HealthCheckModule
 } from './config'
 import { DatabaseModule } from './database/database.module'
+import { DemoSeedService } from './database/demo-seed.service'
 import { DomainModule } from './domain/domain.module'
 import { SharedModule } from './shared/shared.module'
 
@@ -48,7 +49,8 @@ import { SharedModule } from './shared/shared.module'
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
-    }
+    },
+    DemoSeedService
   ]
 })
 export class AppModule {

@@ -7,11 +7,11 @@ services:
     autoDeploy: true
     rootDir: .
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build && pnpm --filter web build
-    startCommand: pnpm migration:run && pnpm seed:boot && node dist/main.js
+    startCommand: pnpm migration:run && node dist/main.js
     healthCheckPath: /api/v1/health/db
     envVars:
       - key: NODE_VERSION
-        value: "22"
+        value: '22'
       - key: NODE_ENV
         value: production
       - key: AI_TRANSCRIPTION_PROVIDER
