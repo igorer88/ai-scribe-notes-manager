@@ -1,6 +1,10 @@
 import { API_BASE_URL } from './env'
 import { clearAccessToken, getAccessToken } from './token'
 
+const UNREACHABLE_MESSAGE =
+  'Unable to reach the server. Check your connection and try again.'
+const GENERIC_MESSAGE = 'Something went wrong. Please try again.'
+
 function handleUnauthorized(response: Response): void {
   if (response.status === 401) {
     clearAccessToken()
@@ -16,6 +20,11 @@ async function parseError(response: Response): Promise<string> {
     return 'Too many attempts, please wait and try again'
   }
 
+  // Never surface raw server errors to the user.
+  if (response.status >= 500) {
+    return GENERIC_MESSAGE
+  }
+
   try {
     const body = await response.json()
     const message = body?.message
@@ -29,7 +38,7 @@ async function parseError(response: Response): Promise<string> {
     // fall through to the generic message
   }
 
-  return `API Error: ${response.status} ${response.statusText}`
+  return GENERIC_MESSAGE
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
@@ -60,7 +69,12 @@ export const api = {
       headers.set('Authorization', `Bearer ${token}`)
     }
 
-    const response = await fetch(url, { ...options, headers })
+    let response: Response
+    try {
+      response = await fetch(url, { ...options, headers })
+    } catch {
+      throw new Error(UNREACHABLE_MESSAGE)
+    }
 
     if (!response.ok) {
       handleUnauthorized(response)
