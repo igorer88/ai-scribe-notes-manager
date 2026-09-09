@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { AlertCircle } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -64,9 +66,10 @@ export function LoginPage() {
             </div>
 
             {error && (
-              <div className="text-red-600 dark:text-red-400 text-sm">
-                {error}
-              </div>
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
 
             <Button type="submit" disabled={isLoading} className="w-full">
