@@ -29,7 +29,7 @@ export const getValidationSchema = (): Joi.ObjectSchema => {
       'http://localhost:9000'
     ),
     AI_TRANSCRIPTION_OPENAI_MODEL: Joi.string().default('whisper-1'),
-    AI_TRANSCRIPTION_GEMINI_MODEL: Joi.string().default('gemini-2.5-flash'),
+    AI_TRANSCRIPTION_GEMINI_MODEL: Joi.string().default('gemini-3.6-flash'),
     // External API keys
     OPENAI_API_KEY: Joi.string().optional(),
     GEMINI_API_KEY: Joi.when('AI_TRANSCRIPTION_PROVIDER', {

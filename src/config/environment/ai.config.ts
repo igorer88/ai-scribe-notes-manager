@@ -33,7 +33,7 @@ export const aiConfig = registerAs('ai', (): AiConfig => ({
     },
     gemini: {
       apiKey: process.env.GEMINI_API_KEY || '',
-      model: process.env.AI_TRANSCRIPTION_GEMINI_MODEL || 'gemini-2.5-flash'
+      model: process.env.AI_TRANSCRIPTION_GEMINI_MODEL || 'gemini-3.6-flash'
     }
   }
 }))
