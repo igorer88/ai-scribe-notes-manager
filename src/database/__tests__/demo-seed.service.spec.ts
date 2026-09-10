@@ -36,6 +36,23 @@ describe('DemoSeedService', () => {
   it('does not throw when provisioning fails', async () => {
     mockRunDemoSeed.mockRejectedValue(new Error('boom'))
 
+    // Suppress the expected error log and replay it as a single-line LOG so
+    // the test output stays consistent (no stack trace).
+    const logger = service['logger'] as {
+      log: (...args: unknown[]) => void
+      error: (...args: unknown[]) => void
+    }
+    const originalLog = logger.log.bind(logger)
+    const loggerErrorSpy = jest
+      .spyOn(logger, 'error')
+      .mockImplementation(() => undefined)
+
     await expect(service.onApplicationBootstrap()).resolves.toBeUndefined()
+
+    originalLog(
+      '[Expected] Demo data provisioning failed; continuing without it'
+    )
+
+    loggerErrorSpy.mockRestore()
   })
 })

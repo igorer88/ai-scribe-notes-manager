@@ -124,6 +124,25 @@ describe('GeminiProvider', () => {
     loggerErrorSpy.mockRestore()
   })
 
+  function silenceFailureLogs(provider: GeminiProvider): {
+    logger: { log: (...args: unknown[]) => void }
+    restore: () => void
+  } {
+    const logger = provider['logger'] as {
+      log: (...args: unknown[]) => void
+      warn: (...args: unknown[]) => void
+      error: (...args: unknown[]) => void
+    }
+    jest.spyOn(logger, 'warn').mockImplementation(() => undefined)
+    jest.spyOn(logger, 'error').mockImplementation(() => undefined)
+    return {
+      logger,
+      restore(): void {
+        jest.restoreAllMocks()
+      }
+    }
+  }
+
   it('should retry transient failures and eventually succeed', async () => {
     // Arrange
     genaiClient.models.generateContent
@@ -141,8 +160,18 @@ describe('GeminiProvider', () => {
       .fn()
       .mockResolvedValue(undefined)
 
+    const { logger, restore } = silenceFailureLogs(provider)
+
     // Act
     const result = await provider.transcribe(mockAudioFile)
+
+    logger.log(
+      '[Expected] Gemini transcription attempt 1/4 failed (status 503); retrying in 1000ms'
+    )
+    logger.log(
+      '[Expected] Gemini transcription attempt 2/4 failed (status 503); retrying in 2000ms'
+    )
+    restore()
 
     // Assert
     expect(genaiClient.models.generateContent).toHaveBeenCalledTimes(3)
@@ -166,10 +195,18 @@ describe('GeminiProvider', () => {
       .fn()
       .mockResolvedValue(undefined)
 
+    const { logger, restore } = silenceFailureLogs(provider)
+
     // Act & Assert
     await expect(provider.transcribe(mockAudioFile)).rejects.toThrow(
       'Gemini transcription failed'
     )
+
+    logger.log(
+      '[Expected] Gemini transcription exhausted 4 attempts (status 503)'
+    )
+    restore()
+
     expect(genaiClient.models.generateContent).toHaveBeenCalledTimes(4)
   })
 
@@ -180,10 +217,16 @@ describe('GeminiProvider', () => {
       message: '{"error":{"code":404,"status":"NOT_FOUND"}}'
     })
 
+    const { logger, restore } = silenceFailureLogs(provider)
+
     // Act & Assert
     await expect(provider.transcribe(mockAudioFile)).rejects.toThrow(
       'Gemini transcription failed'
     )
+
+    logger.log('[Expected] Gemini transcription failed (status 404)')
+    restore()
+
     expect(genaiClient.models.generateContent).toHaveBeenCalledTimes(1)
   })
 })
