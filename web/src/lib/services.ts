@@ -1,5 +1,6 @@
 import { api } from './api'
 import { API_BASE_URL } from './env'
+import { getAccessToken } from './token'
 import type {
   AuthResponse,
   CreateNoteDto,
@@ -53,7 +54,15 @@ export const noteService = {
 
   async getAudioFile(id: string): Promise<string> {
     const url = `${API_BASE_URL}/notes/${id}/audio`
-    return url
+    const token = getAccessToken()
+    const response = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined
+    })
+    if (!response.ok) {
+      throw new Error(`Failed to load audio (${response.status})`)
+    }
+    const blob = await response.blob()
+    return URL.createObjectURL(blob)
   },
 
   async createForPatient(

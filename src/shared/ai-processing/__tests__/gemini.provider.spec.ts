@@ -32,9 +32,9 @@ describe('GeminiProvider', () => {
     mockConfigService = {
       get: jest
         .fn()
-        .mockReturnValue('gemini-2.5-flash')
+        .mockReturnValue('gemini-3.6-flash')
         .mockReturnValueOnce('test-api-key')
-        .mockReturnValueOnce('gemini-2.5-flash')
+        .mockReturnValueOnce('gemini-3.6-flash')
     }
     provider = new GeminiProvider(mockConfigService as unknown as ConfigService)
     genaiClient = mockedGoogleGenAI.mock.results[0].value
@@ -54,12 +54,12 @@ describe('GeminiProvider', () => {
       text: 'Hello patient, take this medication twice daily.',
       metadata: {
         provider: 'gemini',
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.6-flash',
         processingTime: expect.any(Number)
       }
     })
     expect(genaiClient.models.generateContent).toHaveBeenCalledWith({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.6-flash',
       contents: [
         {
           inlineData: {

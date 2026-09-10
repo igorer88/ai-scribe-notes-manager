@@ -54,7 +54,7 @@ The application supports AI-powered transcription for voice notes. Configure the
   - URL of the local Whisper API service
 - `GEMINI_API_KEY` (required when `AI_TRANSCRIPTION_PROVIDER=gemini`)
   - Google API key for the Gemini API
-- `AI_TRANSCRIPTION_GEMINI_MODEL=gemini-2.5-flash` (default: `gemini-2.5-flash`)
+- `AI_TRANSCRIPTION_GEMINI_MODEL=gemini-3.6-flash` (default: `gemini-3.6-flash`)
   - Gemini model used for voice note transcription
 
 #### Docker Compose Whisper Settings
