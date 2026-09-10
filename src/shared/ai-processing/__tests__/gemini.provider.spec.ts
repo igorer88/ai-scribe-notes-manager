@@ -123,4 +123,67 @@ describe('GeminiProvider', () => {
     // Restore logger
     loggerErrorSpy.mockRestore()
   })
+
+  it('should retry transient failures and eventually succeed', async () => {
+    // Arrange
+    genaiClient.models.generateContent
+      .mockRejectedValueOnce({
+        status: 503,
+        message: '{"error":{"code":503,"status":"UNAVAILABLE"}}'
+      })
+      .mockRejectedValueOnce({
+        status: 503,
+        message: '{"error":{"code":503,"status":"UNAVAILABLE"}}'
+      })
+      .mockResolvedValueOnce({ text: '  retried transcription  ' })
+
+    ;(provider as unknown as { sleep: () => Promise<void> }).sleep = jest
+      .fn()
+      .mockResolvedValue(undefined)
+
+    // Act
+    const result = await provider.transcribe(mockAudioFile)
+
+    // Assert
+    expect(genaiClient.models.generateContent).toHaveBeenCalledTimes(3)
+    expect(result).toEqual({
+      text: 'retried transcription',
+      metadata: {
+        provider: 'gemini',
+        model: 'gemini-3.6-flash',
+        processingTime: expect.any(Number)
+      }
+    })
+  })
+
+  it('should throw after exhausting retries on persistent transient failures', async () => {
+    // Arrange
+    genaiClient.models.generateContent.mockRejectedValue({
+      status: 503,
+      message: '{"error":{"code":503,"status":"UNAVAILABLE"}}'
+    })
+    ;(provider as unknown as { sleep: () => Promise<void> }).sleep = jest
+      .fn()
+      .mockResolvedValue(undefined)
+
+    // Act & Assert
+    await expect(provider.transcribe(mockAudioFile)).rejects.toThrow(
+      'Gemini transcription failed'
+    )
+    expect(genaiClient.models.generateContent).toHaveBeenCalledTimes(4)
+  })
+
+  it('should not retry non-transient failures', async () => {
+    // Arrange
+    genaiClient.models.generateContent.mockRejectedValue({
+      status: 404,
+      message: '{"error":{"code":404,"status":"NOT_FOUND"}}'
+    })
+
+    // Act & Assert
+    await expect(provider.transcribe(mockAudioFile)).rejects.toThrow(
+      'Gemini transcription failed'
+    )
+    expect(genaiClient.models.generateContent).toHaveBeenCalledTimes(1)
+  })
 })
