@@ -15,12 +15,15 @@ export function AudioPlayer({
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    let objectUrl: string | null = null
+
     const loadAudio = async () => {
       setIsLoading(true)
       setError(null)
 
       try {
         const url = await noteService.getAudioFile(noteId)
+        objectUrl = url
         setAudioUrl(url)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load audio')
@@ -30,6 +33,12 @@ export function AudioPlayer({
     }
 
     loadAudio()
+
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl)
+      }
+    }
   }, [noteId])
 
   const formatDate = (dateString: string) => {
