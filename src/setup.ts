@@ -49,7 +49,16 @@ export function setup(app: INestApplication): INestApplication {
     defaultVersion: '1'
   })
 
-  app.use(helmet())
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+          'media-src': ["'self'", 'blob:']
+        }
+      }
+    })
+  )
 
   const swaggerEnabled = app
     .get(ConfigService)
